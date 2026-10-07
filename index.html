@@ -1,0 +1,2196 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IV бөлім. Python тілінде алгоритмдерді программалау</title>
+<!-- Skulpt: браузерде Python кодын орындау -->
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --primary:#1e3a5f; --secondary:#ffd700; --accent:#3776ab;
+  --bg:#f8faff; --text:#1a1a2e; --code-bg:#1e1e2e;
+  --success:#28a745; --danger:#dc3545; --info:#17a2b8;
+  --sidebar-w:280px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f7;color:var(--text);line-height:1.75;min-height:100vh}
+
+.navbar{background:var(--primary);padding:14px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.navbar .logo{color:#fff;font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:10px;cursor:pointer}
+.navbar .logo span{background:var(--secondary);color:var(--primary);width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font-weight:800}
+.navbar nav{display:flex;gap:8px;flex-wrap:wrap}
+.navbar nav button{background:transparent;border:none;color:#cdd8e8;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;font-family:inherit;transition:.2s}
+.navbar nav button:hover{background:rgba(255,255,255,.1);color:#fff}
+.navbar nav button.active{background:var(--secondary);color:var(--primary);font-weight:700}
+
+.page{display:none;animation:fadeIn .4s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.hero{background:linear-gradient(135deg,var(--primary) 0%,var(--accent) 100%);color:#fff;text-align:center;padding:80px 30px 90px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:420px;height:420px;background:rgba(255,215,0,.08);border-radius:50%;top:-160px;right:-110px}
+.hero::after{content:'';position:absolute;width:320px;height:320px;background:rgba(255,255,255,.05);border-radius:50%;bottom:-130px;left:-90px}
+.hero .badge-top{display:inline-block;background:rgba(255,215,0,.2);border:1px solid var(--secondary);color:var(--secondary);padding:6px 18px;border-radius:30px;font-size:.85rem;margin-bottom:22px;position:relative}
+.hero h1{font-size:2.5rem;margin-bottom:18px;position:relative}
+.hero p{max-width:700px;margin:0 auto 32px;opacity:.93;font-size:1.05rem;position:relative}
+.hero .buttons{position:relative}
+.btn{display:inline-block;padding:14px 34px;border-radius:10px;text-decoration:none;font-weight:600;margin:6px;transition:.25s;font-size:1rem;border:none;cursor:pointer;font-family:inherit}
+.btn-primary{background:var(--secondary);color:var(--primary)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(255,215,0,.4)}
+.btn-outline{border:2px solid rgba(255,255,255,.6);color:#fff;background:transparent}
+.btn-outline:hover{background:rgba(255,255,255,.15);border-color:#fff}
+
+.stats{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;padding:40px 30px;background:#fff;margin:-45px auto 0;max-width:920px;border-radius:16px;box-shadow:0 12px 30px rgba(30,58,95,.12);position:relative;z-index:5;width:calc(100% - 60px)}
+.stat{text-align:center;min-width:130px}
+.stat .num{font-size:2rem;font-weight:800;color:var(--primary)}
+.stat .label{color:#6b7a90;font-size:.9rem}
+
+.container{max-width:1100px;margin:0 auto;padding:70px 30px 40px}
+.section-head{text-align:center;margin-bottom:45px}
+.section-head h2{font-size:1.8rem;color:var(--primary);margin-bottom:10px}
+.section-head p{color:#6b7a90}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.card{background:#fff;border-radius:14px;padding:28px 26px;text-decoration:none;color:inherit;box-shadow:0 3px 14px rgba(0,0,0,.06);border-top:4px solid var(--accent);transition:.25s;position:relative;cursor:pointer;border:none;text-align:left;font-family:inherit;width:100%}
+.card:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(30,58,95,.15);border-top-color:var(--secondary)}
+.card .icon{width:48px;height:48px;background:#eaf1fb;color:var(--accent);border-radius:12px;display:grid;place-items:center;font-size:1.4rem;font-weight:800;margin-bottom:16px}
+.card h3{color:var(--primary);font-size:1.15rem;margin-bottom:8px}
+.card p{color:#6b7a90;font-size:.92rem;margin-bottom:14px}
+.card .arrow{color:var(--accent);font-weight:600;font-size:.9rem}
+
+.features{background:#fff;padding:70px 30px;margin-top:60px}
+.features-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px}
+.feature{text-align:center}
+.feature .circle{width:64px;height:64px;margin:0 auto 16px;background:linear-gradient(135deg,var(--primary),var(--accent));color:var(--secondary);border-radius:50%;display:grid;place-items:center;font-size:1.5rem}
+.feature h4{color:var(--primary);margin-bottom:8px}
+.feature p{color:#6b7a90;font-size:.92rem}
+
+.chapter-wrap{display:flex;min-height:calc(100vh - 62px)}
+.sidebar{width:var(--sidebar-w);background:var(--primary);color:#fff;padding:24px 0;overflow-y:auto;flex-shrink:0;position:sticky;top:62px;height:calc(100vh - 62px)}
+.sidebar h2{font-size:1rem;padding:0 20px 14px;border-bottom:1px solid rgba(255,255,255,.15);color:var(--secondary)}
+.sidebar nav button{display:block;width:100%;text-align:left;background:transparent;border:none;color:#cdd8e8;padding:11px 20px;font-size:.92rem;border-left:3px solid transparent;transition:.2s;cursor:pointer;font-family:inherit}
+.sidebar nav button:hover,.sidebar nav button.active{background:rgba(255,255,255,.08);border-left-color:var(--secondary);color:#fff}
+.chapter-main{flex:1;padding:35px 50px;max-width:1000px}
+.chapter-main h2.ch-title{color:var(--primary);font-size:1.55rem;border-bottom:3px solid var(--secondary);padding-bottom:12px;margin-bottom:22px}
+h3{color:var(--accent);margin:24px 0 12px;font-size:1.18rem}
+h4{color:var(--primary);margin:18px 0 8px;font-size:1.05rem}
+h5{color:var(--primary);font-size:.95rem;margin-bottom:10px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 16px 24px}
+li{margin-bottom:6px}
+b,strong{color:var(--primary)}
+pre{background:var(--code-bg);color:#e6edf3;padding:18px 22px;border-radius:10px;overflow-x:auto;font-family:'Consolas','Courier New',monospace;font-size:.92rem;line-height:1.6;margin:14px 0;border-left:4px solid var(--accent)}
+code{font-family:'Consolas','Courier New',monospace;background:#e8eefc;color:#1e3a5f;padding:2px 7px;border-radius:5px;font-size:.9em}
+pre code{background:none;color:inherit;padding:0}
+.note{border-left:5px solid var(--info);background:#e7f6f9;padding:14px 20px;border-radius:0 8px 8px 0;margin:18px 0}
+.note.warn{border-color:var(--danger);background:#fdecec}
+.note.ok{border-color:var(--success);background:#e9f8ee}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:.94rem}
+th,td{border:1px solid #d0d9e8;padding:10px 14px;text-align:left}
+th{background:var(--primary);color:#fff}
+tr:nth-child(even){background:#f4f7fd}
+
+.itask{background:#fffbe6;border:2px dashed #ffc107;border-radius:12px;padding:22px 24px;margin:20px 0}
+.itask h4{color:#8a6d00;margin-bottom:12px;font-size:1.05rem}
+.itask label{display:block;margin:10px 0 6px;font-weight:600;color:var(--primary);font-size:.93rem}
+.itask input,.itask select,.itask textarea{width:100%;padding:10px 14px;border:2px solid #d0d9e8;border-radius:8px;font-size:.95rem;font-family:inherit;transition:.2s}
+.itask input:focus,.itask select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(55,118,171,.15)}
+.itask button{margin-top:14px;background:var(--accent);color:#fff;border:none;padding:11px 26px;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit}
+.itask button:hover{background:var(--primary);transform:translateY(-2px)}
+.itask .btn-retry{background:#6b7a90;margin-left:8px}
+.itask .btn-retry:hover{background:#4a5666}
+
+.result{margin-top:14px;padding:12px 16px;border-radius:8px;font-weight:600;display:none}
+.result.show{display:block}
+.result.ok{background:#e9f8ee;color:#155724;border-left:4px solid var(--success)}
+.result.err{background:#fdecec;color:#721c24;border-left:4px solid var(--danger)}
+
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:16px 0}
+.match-col h5{color:var(--primary);font-size:.95rem;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--secondary)}
+.match-item{padding:11px 14px;margin-bottom:8px;background:#fff;border:2px solid #d0d9e8;border-radius:8px;cursor:pointer;transition:.2s;font-size:.93rem;user-select:none}
+.match-item:hover{border-color:var(--accent);background:#eaf1fb}
+.match-item.selected{border-color:var(--secondary);background:#fff8d6;box-shadow:0 0 0 3px rgba(255,215,0,.3)}
+.match-item.matched{border-color:var(--success);background:#e9f8ee;cursor:default;opacity:.75}
+.match-item.matched::after{content:' ✓';color:var(--success);font-weight:800}
+.match-item.wrong-flash{animation:flashRed .5s}
+@keyframes flashRed{0%,100%{background:#fff}50%{background:#fdecec;border-color:var(--danger)}}
+
+.choice-group{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.choice{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#fff;border:2px solid #d0d9e8;border-radius:8px;cursor:pointer;transition:.2s;font-size:.94rem}
+.choice:hover{border-color:var(--accent);background:#eaf1fb}
+.choice input{margin:0;cursor:pointer}
+.choice:has(input:checked){border-color:var(--secondary);background:#fff8d6;box-shadow:0 0 0 3px rgba(255,215,0,.25)}
+.choice.correct{border-color:var(--success);background:#e9f8ee}
+.choice.wrong{border-color:var(--danger);background:#fdecec}
+
+.quiz{background:#f0f6ff;border:2px solid var(--accent);border-radius:12px;padding:24px 28px;margin:22px 0}
+.quiz h4{color:var(--accent);margin-bottom:16px;font-size:1.1rem}
+.question{margin-bottom:18px;padding:14px 16px;background:#fff;border-radius:10px;border-left:4px solid var(--secondary)}
+.question .q-text{font-weight:700;color:var(--primary);margin-bottom:10px}
+.question .opt{display:block;padding:8px 12px;margin:6px 0;border-radius:6px;cursor:pointer;transition:.15s;border:1px solid transparent}
+.question .opt:hover{background:#eaf1fb}
+.question .opt input{margin-right:10px}
+.question .opt.correct{background:#e9f8ee;border-color:var(--success)}
+.question .opt.wrong{background:#fdecec;border-color:var(--danger)}
+.quiz-btn{background:var(--primary);color:#fff;border:none;padding:12px 30px;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s;margin-top:10px;font-family:inherit}
+.quiz-btn:hover{background:var(--accent)}
+.quiz-btn.retry{background:#6b7a90;margin-left:8px}
+.quiz-btn.retry:hover{background:#4a5666}
+
+.quiz-result{margin-top:16px;padding:14px 18px;border-radius:8px;font-weight:700;text-align:center;display:none}
+.quiz-result.show{display:block}
+.quiz-result.pass{background:#e9f8ee;color:#155724;border:2px solid var(--success)}
+.quiz-result.fail{background:#fdecec;color:#721c24;border:2px solid var(--danger)}
+
+.badge{display:inline-block;background:var(--secondary);color:var(--primary);font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:20px;margin-left:8px;vertical-align:middle}
+
+.ch-nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:2px solid #e0e8f5;gap:14px;flex-wrap:wrap}
+.ch-nav button{background:var(--primary);color:#fff;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:inherit;transition:.2s}
+.ch-nav button:hover{background:var(--accent);transform:translateY(-2px)}
+.ch-nav button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+footer{background:var(--primary);color:#cdd8e8;text-align:center;padding:30px 20px;font-size:.9rem}
+footer a{color:var(--secondary);text-decoration:none}
+
+#topBtn{position:fixed;bottom:25px;right:25px;background:var(--primary);color:#fff;border:none;width:48px;height:48px;border-radius:50%;font-size:1.3rem;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25);display:none;z-index:200}
+#topBtn:hover{background:var(--accent)}
+
+/* === БЛОК-СХЕМАЛАР === */
+.flowchart{display:flex;flex-direction:column;align-items:center;margin:26px auto;padding:20px;background:#f8faff;border-radius:12px;border:2px solid #dbe5f1;max-width:720px}
+.flowchart svg{max-width:100%;height:auto;display:block}
+.flowchart .fc-caption{font-size:.85rem;color:#6b7a90;margin-top:12px;font-style:italic;text-align:center;font-weight:600}
+
+/* === КОД ЖАЗУ ЕСЕПТЕРІ (Python редактор) === */
+.code-task{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-radius:14px;padding:24px;margin:24px 0;color:#e6edf3;border:2px solid var(--accent);box-shadow:0 8px 24px rgba(30,58,95,.25)}
+.code-task .ct-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:12px;border-bottom:2px dashed rgba(255,215,0,.3)}
+.code-task .ct-head h4{color:#ffd700;margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px}
+.code-task .ct-head .diff{display:inline-block;font-size:.72rem;padding:3px 12px;border-radius:20px;font-weight:700;margin-left:auto}
+.diff-1{background:#064e3b;color:#6ee7b7}
+.diff-2{background:#78350f;color:#fcd34d}
+.diff-3{background:#7f1d1d;color:#fca5a5}
+.code-task .task-desc{background:rgba(255,255,255,.06);border-left:4px solid #ffd700;padding:14px 18px;border-radius:0 10px 10px 0;margin-bottom:16px;font-size:.94rem;line-height:1.7}
+.code-task .task-desc b{color:#ffd700}
+.code-task .task-desc code{background:rgba(255,255,255,.1);color:#7dd3fc;padding:2px 7px;border-radius:5px;font-size:.9em}
+.code-task .editor-label{display:flex;align-items:center;gap:8px;font-size:.85rem;color:#94a3b8;margin-bottom:8px;font-family:'Consolas',monospace}
+.code-task .editor-label::before{content:'';width:10px;height:10px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80}
+.code-task textarea{width:100%;min-height:160px;background:#0a0a14;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:.93rem;line-height:1.65;padding:16px;border:2px solid #334155;border-radius:10px;resize:vertical;transition:.2s;tab-size:4}
+.code-task textarea:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.15)}
+.code-task .ct-buttons{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.code-task button{border:none;padding:11px 24px;border-radius:8px;font-size:.94rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.code-task .run-btn{background:#28a745;color:#fff}
+.code-task .run-btn:hover{background:#1e7e34;transform:translateY(-2px)}
+.code-task .check-btn{background:#ffd700;color:#1e3a5f}
+.code-task .check-btn:hover{background:#ffc107;transform:translateY(-2px)}
+.code-task .retry-btn{background:#475569;color:#fff}
+.code-task .retry-btn:hover{background:#334155}
+.code-task .output-label{font-size:.85rem;color:#94a3b8;margin:14px 0 8px;font-family:'Consolas',monospace}
+.code-task .output{background:#0a0a14;color:#4ade80;font-family:'Consolas','Courier New',monospace;font-size:.92rem;padding:14px 18px;border-radius:10px;min-height:48px;border-left:4px solid #4ade80;white-space:pre-wrap;word-break:break-word}
+.code-task .output.empty{color:#64748b;font-style:italic;border-left-color:#475569}
+.code-task .output.err{color:#f87171;border-left-color:#dc3545}
+.code-task .ct-result{margin-top:14px;padding:12px 18px;border-radius:8px;font-weight:700;display:none;font-size:.94rem}
+.code-task .ct-result.show{display:block}
+.code-task .ct-result.ok{background:rgba(40,167,69,.15);color:#4ade80;border:1px solid #28a745}
+.code-task .ct-result.err{background:rgba(220,53,69,.15);color:#f87171;border:1px solid #dc3545}
+
+@media(max-width:900px){
+  .navbar{padding:12px 16px;flex-direction:column;gap:10px}
+  .navbar nav{justify-content:center}
+  .hero h1{font-size:1.7rem}
+  .hero{padding:55px 20px 70px}
+  .chapter-wrap{flex-direction:column}
+  .sidebar{width:100%;position:static;height:auto;max-height:none}
+  .chapter-main{padding:24px 20px}
+  .stats{margin-top:-30px;padding:26px 18px}
+}
+@media(max-width:600px){
+  .match-wrap{grid-template-columns:1fr}
+  .itask button,.quiz-btn{width:100%;margin-left:0 !important;margin-top:8px}
+  .code-task .ct-buttons button{width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo" onclick="showPage('home')"><span>Py</span> Алгоритмдерді программалау</div>
+  <nav>
+    <button onclick="showPage('home')" class="active" data-page="home">🏠 Басты бет</button>
+    <button onclick="showPage('ch1')" data-page="ch1">1. Кіріспе</button>
+    <button onclick="showPage('ch2')" data-page="ch2">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')" data-page="ch3">3. Синтаксис</button>
+    <button onclick="showPage('ch4')" data-page="ch4">4. Шарттар</button>
+    <button onclick="showPage('ch5')" data-page="ch5">5. Циклдер</button>
+    <button onclick="showPage('ch6')" data-page="ch6">6. Функциялар</button>
+    <button onclick="showPage('ch7')" data-page="ch7">7. Тізімдер</button>
+    <button onclick="showPage('ch8')" data-page="ch8">8. Қорытынды</button>
+  </nav>
+</div>
+
+<!-- БАСТЫ БЕТ -->
+<div class="page active" id="page-home">
+  <header class="hero">
+    <div class="badge-top">IV бөлім · Информатика</div>
+    <h1>Python тілінде алгоритмдерді программалау</h1>
+    <p>Алгоритмдердің негізгі түрлерін — сызықтық, тармақталған және циклдік — Python тілінде қалай жүзеге асыруға болатынын қарапайым әрі түсінікті түрде үйреніңіз.</p>
+    <div class="buttons">
+      <button class="btn btn-primary" onclick="showPage('ch1')">Оқуды бастау →</button>
+      <button class="btn btn-outline" onclick="showPage('ch8')">Қорытынды тест</button>
+    </div>
+  </header>
+  <div class="stats">
+    <div class="stat"><div class="num">8</div><div class="label">Тарау</div></div>
+    <div class="stat"><div class="num">15</div><div class="label">Код жазу есебі</div></div>
+    <div class="stat"><div class="num">180</div><div class="label">Тест сұрағы</div></div>
+    <div class="stat"><div class="num">100%</div><div class="label">Тегін материал</div></div>
+  </div>
+  <div class="container">
+    <div class="section-head"><h2>Бөлім мазмұны</h2><p>Оқу материалы тарауларға бөлінген — қажеттісін таңдап, оқуды жалғастырыңыз</p></div>
+    <div class="cards">
+      <button class="card" onclick="showPage('ch1')"><div class="icon">1</div><h3>Кіріспе</h3><p>Python тілінің артықшылықтары, алгоритм ұғымы және қасиеттері.</p><div class="arrow">Оқу →</div></button>
+      <button class="card" onclick="showPage('ch2')"><div class="icon">2</div><h3>Алгоритм түрлері</h3><p>Сызықтық, тармақталған және циклдік алгоритмдер, блок-схемалар.</p><div class="arrow">Оқу →</div></button>
+      <button class="card" onclick="showPage('ch3')"><div class="icon">3</div><h3>Python синтаксисі</h3><p>Айнымалылар, типтер, енгізу-шығару, арифметикалық операторлар.</p><div class="arrow">Оқу →</div></button>
+      <button class="card" onclick="showPage('ch4')"><div class="icon">4</div><h3>Шартты операторлар</h3><p>if / elif / else, салыстыру және логикалық операторлар.</p><div class="arrow">Оқу →</div></button>
+      <button class="card" onclick="showPage('ch5')"><div class="icon">5</div><h3>Циклдер</h3><p>for, while, range(), break, continue — қайталау құрылымдары.</p><div class="arrow">Оқу →</div></button>
+      <button class="card" onclick="showPage('ch6')"><div class="icon">6</div><h3>Функциялар</h3><p>def арқылы функция құру, параметрлер, қайтару, рекурсия.</p><div class="arrow">Оқу →</div></button>
+      <button class="card" onclick="showPage('ch7')"><div class="icon">7</div><h3>Тізімдер мен жолдар</h3><p>list және str деректер құрылымдары, негізгі әдістер.</p><div class="arrow">Оқу →</div></button>
+      <button class="card" onclick="showPage('ch8')"><div class="icon">8</div><h3>Қорытынды тест</h3><p>Барлық тақырыпты қамтитын 40 сұрақтан тұратын тест.</p><div class="arrow">Бастау →</div></button>
+    </div>
+  </div>
+  <section class="features">
+    <div class="section-head"><h2>Неге осы материал?</h2><p>Қарапайым тілде, нақты мысалдармен түсіндірілген</p></div>
+    <div class="features-grid">
+      <div class="feature"><div class="circle">📘</div><h4>Түсінікті теория</h4><p>Әр тақырып қарапайым тілде, мысалдармен түсіндірілген.</p></div>
+      <div class="feature"><div class="circle">💻</div><h4>Код жазу есептері</h4><p>Өз Python кодыңызды жазып, браузерде бірден іске қосыңыз.</p></div>
+      <div class="feature"><div class="circle">📊</div><h4>Блок-схемалар</h4><p>Теория визуалды блок-схемалармен толықтырылған.</p></div>
+      <div class="feature"><div class="circle">🎯</div><h4>Интерактивті тест</h4><p>Әр тарауда 20 сұрақ, қорытындыда 40 сұрақ.</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- 1 ТАРАУ -->
+<div class="page" id="page-ch1">
+<div class="chapter-wrap">
+  <aside class="sidebar"><h2>📚 IV бөлім</h2><nav>
+    <button onclick="showPage('ch1')" class="active">1. Кіріспе</button>
+    <button onclick="showPage('ch2')">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')">3. Python синтаксисі</button>
+    <button onclick="showPage('ch4')">4. Шартты операторлар</button>
+    <button onclick="showPage('ch5')">5. Циклдер</button>
+    <button onclick="showPage('ch6')">6. Функциялар</button>
+    <button onclick="showPage('ch7')">7. Тізімдер мен жолдар</button>
+    <button onclick="showPage('ch8')">8. Қорытынды тест</button>
+  </nav></aside>
+  <div class="chapter-main">
+    <h2 class="ch-title">1-тарау. Кіріспе <span class="badge">Теория</span></h2>
+    <h3>Бұл бөлімде нені үйренесіз?</h3>
+    <p>Бұл — <b>IV бөлімнің кіріспесі</b>. Мұнда біз Python тілінің не екенін, оның не үшін қолданылатынын және алгоритм дегеніміз не екенін қарапайым тілде түсінеміз.</p>
+    <ul><li>✅ Python дегеніміз не екенін және ол қайда қолданылатынын білесіз;</li><li>✅ Алгоритм дегеніміз не және оның қандай қасиеттері бар екенін түсінесіз;</li><li>✅ Алғашқы Python программаңызды жаза аласыз;</li><li>✅ Алгоритмдердің негізгі түрлерін ажырата аласыз.</li></ul>
+    <div class="note"><b>💡 Қарапайым тілде:</b> Python — компьютерге «не істеу керектігін» түсінікті тілде айтуға мүмкіндік беретін құрал. Ал алгоритм — сол «не істеу керектігін» ретімен жазып шығу жоспары.</div>
+    <h3>Негізгі терминдер</h3>
+    <table>
+      <tr><th>Термин</th><th>Түсіндірме</th></tr>
+      <tr><td>Бағдарламалау тілі</td><td>Компьютерге нұсқаулар беретін жасанды тіл</td></tr>
+      <tr><td>Интерпретатор</td><td>Кодты жолма-жол оқып, бірден орындайтын бағдарлама</td></tr>
+      <tr><td>Компилятор</td><td>Кодты толық машиналық тілге аударатын бағдарлама</td></tr>
+      <tr><td>Айнымалы</td><td>Деректерді сақтайтын атаулы жады ұяшығы</td></tr>
+      <tr><td>Синтаксис</td><td>Тілдің жазылу ережелерінің жиынтығы</td></tr>
+      <tr><td>Бағдарлама</td><td>Компьютер орындайтын нұсқаулар тізбегі</td></tr>
+      <tr><td>Код</td><td>Бағдарламалау тілінде жазылған мәтін</td></tr>
+      <tr><td>Қате (error)</td><td>Бағдарламаның дұрыс жұмыс істемеуі</td></tr>
+    </table>
+    <h3>Python тілінің артықшылықтары</h3>
+    <ul><li>✅ <b>Қарапайым синтаксис</b> — ағылшын тіліне ұқсас, оқуға жеңіл</li><li>✅ <b>Кроссплатформалық</b> — Windows, Linux, macOS жүйелерінде жұмыс істейді</li><li>✅ <b>Тегін және ашық кодты</b> — кез келген адам пайдалана алады</li><li>✅ <b>Бағыттамалық кітапханалар</b> — AI, веб, ғылым үшін дайын модульдер</li><li>✅ <b>Үлкен қауымдастық</b> — сұрақтарға жауап табу оңай</li><li>✅ <b>Жылдам прототиптеу</b> — идеяны тез жүзеге асыруға болады</li></ul>
+    <div class="note warn"><b>📌 Білу керек:</b> Python — <b>интерпретацияланатын</b> тіл. Бұл дегеніміз, код жазылған соң бірден орындалады, алдын ала компиляциялау қажет емес.</div>
+    <h3>Python тілінің қысқаша тарихы</h3>
+    <table>
+      <tr><th>Жыл</th><th>Оқиға</th></tr>
+      <tr><td>1989</td><td>Гвидо ван Россум жұмысты бастады</td></tr>
+      <tr><td>1991</td><td>Python 0.9.0 бірінші нұсқасы шықты</td></tr>
+      <tr><td>2000</td><td>Python 2.0 жарық көрді</td></tr>
+      <tr><td>2008</td><td>Python 3.0 шықты (қазіргі негізгі нұсқа)</td></tr>
+      <tr><td>2020</td><td>Python 2 қолдаудан шығарылды</td></tr>
+      <tr><td>2024</td><td>Python 3.13 — ең соңғы тұрақты нұсқа</td></tr>
+    </table>
+    <h3>Python дегеніміз не?</h3>
+    <p><b>Python</b> — 1991 жылы Гвидо ван Россум жасаған бағдарламалау тілі. Ол қарапайым, оқуға жеңіл және әлемдегі ең танымал тілдердің бірі. Мысалы, Python-да «Сәлем, әлем!» деп шығару үшін бір ғана жол жазу жеткілікті:</p>
+    <pre><code>print("Сәлем, әлем!")</code></pre>
+    <h3>Python қайда қолданылады?</h3>
+    <table>
+      <tr><th>Сала</th><th>Мысал</th></tr>
+      <tr><td>🌐 Веб-әзірлеу</td><td>Instagram, YouTube, Dropbox</td></tr>
+      <tr><td>🤖 Жасанды интеллект</td><td>ChatGPT, Tesla автопилоты</td></tr>
+      <tr><td>📊 Деректерді талдау</td><td>Google, NASA зерттеулері</td></tr>
+      <tr><td>🎮 Ойын жасау</td><td>Civilization IV, EVE Online</td></tr>
+      <tr><td>🔬 Ғылыми есептеулер</td><td>Физика, биология, медицина</td></tr>
+      <tr><td>📱 Мобильді қосымшалар</td><td>Kivy, BeeWare арқылы</td></tr>
+      <tr><td>🔧 Автоматтандыру</td><td>Скрипттер, боттар</td></tr>
+    </table>
+    <h3>Алгоритм дегеніміз не?</h3>
+    <p><b>Алгоритм</b> — белгілі бір мәселені шешу үшін орындалатын нақты, реттелген әрекеттер тізбегі. Күнделікті өмірде де алгоритм көп:</p>
+    <ul><li>🍵 Шай қайнату алгоритмі: су құй → қайнат → шай сал → құй → іш.</li><li>🚪 Үйден шығу алгоритмі: киін → кілт ал → есікті аш → шық → құлыпта.</li><li>📱 Телефон қоңырауы: қолданбаны аш → нөмір тер → қоңырау бас.</li></ul>
+    <h3>Алгоритмнің 4 қасиеті</h3>
+    <table>
+      <tr><th>Қасиет</th><th>Мағынасы</th><th>Мысал</th></tr>
+      <tr><td>Дискреттілік</td><td>Жеке қадамдарға бөлінеді</td><td>1-қадам, 2-қадам...</td></tr>
+      <tr><td>Нәтижелілік</td><td>Шекті қадамнан кейін нәтиже береді</td><td>Шай дайын болады</td></tr>
+      <tr><td>Жалпылық</td><td>Ұқсас есептерді шеше алады</td><td>Кез келген шайға жарайды</td></tr>
+      <tr><td>Түсініктілік</td><td>Орындаушыға түсінікті</td><td>Адам түсінеді</td></tr>
+    </table>
+
+    <h3>Алгоритмнің жалпы құрылымы (блок-схема)</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 340 400" width="340">
+        <defs><marker id="arw1" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker></defs>
+        <ellipse cx="170" cy="28" rx="80" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="170" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="170" y1="50" x2="170" y2="76" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arw1)"/>
+        <polygon points="70,76 250,76 270,114 90,114" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="170" y="100" text-anchor="middle" font-size="12" fill="#1e3a5f">Деректерді енгізу</text>
+        <line x1="170" y1="114" x2="170" y2="140" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arw1)"/>
+        <rect x="70" y="140" width="200" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="170" y="161" text-anchor="middle" font-size="12" fill="#1e3a5f">Өңдеу / есептеу</text>
+        <text x="170" y="177" text-anchor="middle" font-size="11" fill="#3776ab">(алгоритм қадамдары)</text>
+        <line x1="170" y1="184" x2="170" y2="210" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arw1)"/>
+        <polygon points="70,210 250,210 270,248 90,248" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="170" y="234" text-anchor="middle" font-size="12" fill="#1e3a5f">Нәтижені шығару</text>
+        <line x1="170" y1="248" x2="170" y2="274" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arw1)"/>
+        <rect x="70" y="274" width="200" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="170" y="295" text-anchor="middle" font-size="12" fill="#1e3a5f">Шарт тексеру</text>
+        <text x="170" y="311" text-anchor="middle" font-size="11" fill="#3776ab">(қажет болса)</text>
+        <line x1="170" y1="318" x2="170" y2="344" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arw1)"/>
+        <ellipse cx="170" cy="366" rx="80" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="170" y="372" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Соңы</text>
+      </svg>
+      <div class="fc-caption">Кез келген алгоритмнің жалпы құрылымы</div>
+    </div>
+
+    <h3>Алгоритмді жазу тәсілдері</h3>
+    <ul><li><b>Сөзбен жазу</b> — қарапайым тілде қадамдарды сипаттау</li><li><b>Блок-схема</b> — графикалық пішіндер арқылы бейнелеу</li><li><b>Программалық код</b> — нақты бағдарламалау тілінде жазу</li><li><b>Псевдокод</b> — адам түсінетін, бірақ нақты синтаксисі жоқ жазба</li></ul>
+    <h3>Алгоритм мен программаның айырмашылығы</h3>
+    <table>
+      <tr><th>Алгоритм</th><th>Программа</th></tr>
+      <tr><td>Мәселені шешу жоспары</td><td>Жоспардың нақты жүзеге асуы</td></tr>
+      <tr><td>Тілге тәуелсіз</td><td>Нақты тілде жазылады</td></tr>
+      <tr><td>Адамға түсінікті</td><td>Компьютерге түсінікті</td></tr>
+      <tr><td>Қағазда жазылуы мүмкін</td><td>Файлда сақталады</td></tr>
+    </table>
+    <div class="note ok"><b>🎯 Қорытынды:</b> Python — құрал, алгоритм — жоспар. Екеуін біріктіріп, компьютерге есептерді шешуді үйретеміз!</div>
+
+    <h3>🎯 Интерактивті тапсырмалар</h3>
+
+    <div class="itask">
+      <h4>Тапсырма 1.1 — Сәйкестендіру</h4>
+      <div class="match-wrap" id="match1">
+        <div class="match-col"><h5>Ұғымдар</h5>
+          <div class="match-item" data-id="a">1. Python</div>
+          <div class="match-item" data-id="b">2. Алгоритм</div>
+          <div class="match-item" data-id="c">3. Дискреттілік</div>
+          <div class="match-item" data-id="d">4. Нәтижелілік</div>
+        </div>
+        <div class="match-col"><h5>Сипаттамалар</h5>
+          <div class="match-item" data-id="b">A. Әрекеттердің реттелген тізбегі</div>
+          <div class="match-item" data-id="d">B. Шекті қадамнан кейін нәтиже беруі</div>
+          <div class="match-item" data-id="a">C. 1991 жылы жасалған бағдарламалау тілі</div>
+          <div class="match-item" data-id="c">D. Жеке қадамдарға бөлінуі</div>
+        </div>
+      </div>
+      <button onclick="checkMatch('match1','rMatch1')">Тексеру</button>
+      <button class="btn-retry" onclick="resetMatch('match1','rMatch1')">🔄 Қайта орындау</button>
+      <div class="result" id="rMatch1"></div>
+    </div>
+
+    <div class="itask">
+      <h4>Тапсырма 1.2 — Дұрыс жауапты таңда</h4>
+      <label>Python қай жылы жасалды және кім жасады?</label>
+      <select id="t12b">
+        <option value="">-- Таңдаңыз --</option>
+        <option value="1">1989, Деннис Ритчи</option>
+        <option value="2">1991, Гвидо ван Россум</option>
+        <option value="3">2000, Бьёрн Страуструп</option>
+        <option value="4">1995, Джеймс Гослинг</option>
+      </select>
+      <button onclick="check12b()">Тексеру</button>
+      <button class="btn-retry" onclick="resetSelect('t12b','r12b')">🔄 Қайта орындау</button>
+      <div class="result" id="r12b"></div>
+    </div>
+
+    <div class="itask">
+      <h4>Тапсырма 1.3 — Алгоритм қасиетін анықта</h4>
+      <p style="font-size:.92rem;margin-bottom:12px;">«Алгоритм шектеулі қадамдардан кейін міндетті түрде нәтиже беруі керек» — бұл қай қасиет?</p>
+      <div class="choice-group" id="t13b">
+        <label class="choice"><input type="radio" name="q13b" value="1"><span>Дискреттілік</span></label>
+        <label class="choice"><input type="radio" name="q13b" value="2"><span>Нәтижелілік</span></label>
+        <label class="choice"><input type="radio" name="q13b" value="3"><span>Жалпылық</span></label>
+        <label class="choice"><input type="radio" name="q13b" value="4"><span>Түсініктілік</span></label>
+      </div>
+      <button onclick="check13b()">Тексеру</button>
+      <button class="btn-retry" onclick="resetChoice('t13b','r13b')">🔄 Қайта орындау</button>
+      <div class="result" id="r13b"></div>
+    </div>
+
+    <h3>📝 20 тест</h3>
+    <div class="quiz" id="quiz1"></div>
+
+    <div class="ch-nav">
+      <button disabled>← Алдыңғы</button>
+      <button onclick="showPage('ch2')">Келесі →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 2 ТАРАУ -->
+<div class="page" id="page-ch2">
+<div class="chapter-wrap">
+  <aside class="sidebar"><h2>📚 IV бөлім</h2><nav>
+    <button onclick="showPage('ch1')">1. Кіріспе</button>
+    <button onclick="showPage('ch2')" class="active">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')">3. Python синтаксисі</button>
+    <button onclick="showPage('ch4')">4. Шартты операторлар</button>
+    <button onclick="showPage('ch5')">5. Циклдер</button>
+    <button onclick="showPage('ch6')">6. Функциялар</button>
+    <button onclick="showPage('ch7')">7. Тізімдер мен жолдар</button>
+    <button onclick="showPage('ch8')">8. Қорытынды тест</button>
+  </nav></aside>
+  <div class="chapter-main">
+    <h2 class="ch-title">2-тарау. Алгоритм түрлері <span class="badge">Теория</span></h2>
+    <p>Алгоритмдер орындалу ретіне қарай үш негізгі түрге бөлінеді.</p>
+    <h3>Алгоритм түрлерінің салыстырмалы кестесі</h3>
+    <table>
+      <tr><th>Түрі</th><th>Сипаттамасы</th><th>Мысал</th><th>Блок-схема</th></tr>
+      <tr><td>Сызықтық</td><td>Командалар ретімен орындалады</td><td>Екі санды қосу</td><td>Тізбектей тіктөртбұрыштар</td></tr>
+      <tr><td>Тармақталған</td><td>Шартқа байланысты таңдау</td><td>Жұп/тақ анықтау</td><td>Ромб арқылы бұтақталу</td></tr>
+      <tr><td>Циклдік</td><td>Әрекет бірнеше рет қайталанады</td><td>1-ден 10-ға дейін санау</td><td>Кері байланыс сызығы</td></tr>
+    </table>
+    <h3>Блок-схема дегеніміз не?</h3>
+    <p><b>Блок-схема</b> — алгоритмді графикалық түрде бейнелеу тәсілі. Әр қадам арнайы пішінмен белгіленеді.</p>
+
+    <h3>1. Сызықтық алгоритм — блок-схема</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 340 460" width="340">
+        <defs><marker id="arwL" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker></defs>
+        <ellipse cx="170" cy="28" rx="80" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="170" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="170" y1="50" x2="170" y2="76" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwL)"/>
+        <polygon points="70,76 250,76 270,114 90,114" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="170" y="100" text-anchor="middle" font-size="12" fill="#1e3a5f">a, b енгізу</text>
+        <line x1="170" y1="114" x2="170" y2="140" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwL)"/>
+        <rect x="70" y="140" width="200" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="170" y="167" text-anchor="middle" font-size="12" fill="#1e3a5f">c = a + b</text>
+        <line x1="170" y1="184" x2="170" y2="210" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwL)"/>
+        <polygon points="70,210 250,210 270,248 90,248" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="170" y="234" text-anchor="middle" font-size="12" fill="#1e3a5f">c шығару</text>
+        <line x1="170" y1="248" x2="170" y2="274" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwL)"/>
+        <rect x="70" y="274" width="200" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="170" y="301" text-anchor="middle" font-size="12" fill="#1e3a5f">d = c * 2</text>
+        <line x1="170" y1="318" x2="170" y2="344" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwL)"/>
+        <polygon points="70,344 250,344 270,382 90,382" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="170" y="368" text-anchor="middle" font-size="12" fill="#1e3a5f">d шығару</text>
+        <line x1="170" y1="382" x2="170" y2="408" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwL)"/>
+        <ellipse cx="170" cy="430" rx="80" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="170" y="436" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Соңы</text>
+      </svg>
+      <div class="fc-caption">Сызықтық алгоритм — барлық қадамдар тізбектей орындалады</div>
+    </div>
+    <pre><code>a = 5
+b = 3
+c = a + b
+print(c)   # 8</code></pre>
+
+    <h3>2. Тармақталған алгоритм — блок-схема</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 500 520" width="500">
+        <defs><marker id="arwB" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker></defs>
+        <ellipse cx="250" cy="28" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="250" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="250" y1="50" x2="250" y2="76" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwB)"/>
+        <polygon points="145,76 335,76 355,114 165,114" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="250" y="100" text-anchor="middle" font-size="12" fill="#1e3a5f">n енгізу</text>
+        <line x1="250" y1="114" x2="250" y2="140" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwB)"/>
+        <polygon points="250,142 355,195 250,248 145,195" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="250" y="192" text-anchor="middle" font-size="12" font-weight="700" fill="#721c24">n % 2 == 0 ?</text>
+        <text x="250" y="208" text-anchor="middle" font-size="11" fill="#721c24">(жұп па?)</text>
+        <line x1="145" y1="195" x2="45" y2="195" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="45" y1="195" x2="45" y2="348" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="45" y1="348" x2="90" y2="348" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwB)"/>
+        <text x="75" y="185" text-anchor="middle" font-size="13" font-weight="700" fill="#28a745">Иә</text>
+        <line x1="355" y1="195" x2="455" y2="195" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="455" y1="195" x2="455" y2="348" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="455" y1="348" x2="410" y2="348" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwB)"/>
+        <text x="425" y="185" text-anchor="middle" font-size="13" font-weight="700" fill="#dc3545">Жоқ</text>
+        <polygon points="80,330 180,330 200,366 100,366" fill="#e9f8ee" stroke="#28a745" stroke-width="2"/>
+        <text x="140" y="353" text-anchor="middle" font-size="12" fill="#155724">"Жұп"</text>
+        <polygon points="300,330 400,330 420,366 320,366" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="360" y="353" text-anchor="middle" font-size="12" fill="#721c24">"Тақ"</text>
+        <line x1="140" y1="366" x2="140" y2="420" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="360" y1="366" x2="360" y2="420" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="140" y1="420" x2="360" y2="420" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="250" y1="420" x2="250" y2="448" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwB)"/>
+        <ellipse cx="250" cy="472" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="250" y="478" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Соңы</text>
+      </svg>
+      <div class="fc-caption">Тармақталған алгоритм — шартқа байланысты бағыт таңдалады</div>
+    </div>
+    <pre><code>san = 7
+if san % 2 == 0:
+    print("Жұп")
+else:
+    print("Тақ")</code></pre>
+
+    <h3>3. Циклдік алгоритм — блок-схема</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 480 500" width="480">
+        <defs><marker id="arwC" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker></defs>
+        <ellipse cx="320" cy="28" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="320" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="320" y1="50" x2="320" y2="76" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwC)"/>
+        <rect x="220" y="80" width="200" height="42" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="320" y="106" text-anchor="middle" font-size="12" fill="#1e3a5f">i = 1</text>
+        <line x1="320" y1="122" x2="320" y2="140" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwC)"/>
+        <polygon points="320,140 440,200 320,260 200,200" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="320" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#721c24">i &lt;= 5 ?</text>
+        <text x="320" y="214" text-anchor="middle" font-size="11" fill="#721c24">(шарт)</text>
+        <line x1="200" y1="200" x2="60" y2="200" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="60" y1="200" x2="60" y2="340" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="60" y1="340" x2="100" y2="340" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwC)"/>
+        <text x="120" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#28a745">Иә</text>
+        <polygon points="90,322 210,322 230,358 110,358" fill="#e9f8ee" stroke="#28a745" stroke-width="2"/>
+        <text x="160" y="345" text-anchor="middle" font-size="12" fill="#155724">i шығару</text>
+        <line x1="170" y1="358" x2="170" y2="380" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwC)"/>
+        <rect x="100" y="380" width="140" height="40" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="170" y="405" text-anchor="middle" font-size="12" fill="#1e3a5f">i = i + 1</text>
+        <line x1="170" y1="420" x2="170" y2="470" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="170" y1="470" x2="20" y2="470" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="20" y1="470" x2="20" y2="132" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="20" y1="132" x2="316" y2="132" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwC)"/>
+        <line x1="320" y1="260" x2="320" y2="302" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwC)"/>
+        <text x="335" y="285" font-size="13" font-weight="700" fill="#dc3545">Жоқ</text>
+        <polygon points="250,304 390,304 410,340 270,340" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="330" y="327" text-anchor="middle" font-size="11" fill="#721c24">"Аяқталды" шығару</text>
+        <line x1="340" y1="340" x2="340" y2="378" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwC)"/>
+        <ellipse cx="340" cy="402" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="340" y="408" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Соңы</text>
+      </svg>
+      <div class="fc-caption">Циклдік алгоритм — шарт орындалғанша қайталанады</div>
+    </div>
+    <pre><code>for i in range(1, 6):
+    print(i)
+# 1 2 3 4 5</code></pre>
+
+    <h3>Блок-схема элементтері</h3>
+    <table>
+      <tr><th>Пішін</th><th>Мағынасы</th></tr>
+      <tr><td>▭ Тіктөртбұрыш</td><td>Процесс (әрекет)</td></tr>
+      <tr><td>◇ Ромб</td><td>Шарт (таңдау)</td></tr>
+      <tr><td>▱ Параллелограмм</td><td>Енгізу/шығару</td></tr>
+      <tr><td>⬭ Сопақша</td><td>Басы/соңы</td></tr>
+      <tr><td>→ Көрсеткі</td><td>Орындалу бағыты</td></tr>
+    </table>
+
+    <h3>🎯 Интерактивті тапсырмалар</h3>
+    <div class="itask">
+      <h4>Тапсырма 2.1 — Сәйкестендіру</h4>
+      <div class="match-wrap" id="match2">
+        <div class="match-col"><h5>Алгоритм түрі</h5>
+          <div class="match-item" data-id="a">1. Сызықтық</div>
+          <div class="match-item" data-id="b">2. Тармақталған</div>
+          <div class="match-item" data-id="c">3. Циклдік</div>
+          <div class="match-item" data-id="d">4. Блок-схема шарты</div>
+        </div>
+        <div class="match-col"><h5>Сипаттамасы</h5>
+          <div class="match-item" data-id="c">A. Әрекет бірнеше рет қайталанады</div>
+          <div class="match-item" data-id="a">B. Командалар ретімен орындалады</div>
+          <div class="match-item" data-id="d">C. Ромбпен белгіленеді</div>
+          <div class="match-item" data-id="b">D. Шартқа байланысты таңдау</div>
+        </div>
+      </div>
+      <button onclick="checkMatch('match2','rMatch2')">Тексеру</button>
+      <button class="btn-retry" onclick="resetMatch('match2','rMatch2')">🔄 Қайта орындау</button>
+      <div class="result" id="rMatch2"></div>
+    </div>
+    <div class="itask">
+      <h4>Тапсырма 2.2 — Нәтижені есепте</h4>
+      <pre><code>a = 10
+b = 4
+print(a - b * 2)</code></pre>
+      <input type="number" id="t22" placeholder="Санды енгіз">
+      <button onclick="check22()">Тексеру</button>
+      <button class="btn-retry" onclick="resetInput('t22','r22')">🔄 Қайта орындау</button>
+      <div class="result" id="r22"></div>
+    </div>
+    <div class="itask">
+      <h4>Тапсырма 2.3 — Радио-нұсқа</h4>
+      <p style="font-size:.92rem;margin-bottom:12px;">Шартты белгілеу үшін блок-схемада қандай пішін қолданылады?</p>
+      <div class="choice-group" id="t23b">
+        <label class="choice"><input type="radio" name="q23b" value="1"><span>Тіктөртбұрыш</span></label>
+        <label class="choice"><input type="radio" name="q23b" value="2"><span>Ромб</span></label>
+        <label class="choice"><input type="radio" name="q23b" value="3"><span>Параллелограмм</span></label>
+        <label class="choice"><input type="radio" name="q23b" value="4"><span>Сопақша</span></label>
+      </div>
+      <button onclick="check23b()">Тексеру</button>
+      <button class="btn-retry" onclick="resetChoice('t23b','r23b')">🔄 Қайта орындау</button>
+      <div class="result" id="r23b"></div>
+    </div>
+    <h3>📝 20 тест</h3>
+    <div class="quiz" id="quiz2"></div>
+    <div class="ch-nav">
+      <button onclick="showPage('ch1')">← Алдыңғы</button>
+      <button onclick="showPage('ch3')">Келесі →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 3 ТАРАУ -->
+<div class="page" id="page-ch3">
+<div class="chapter-wrap">
+  <aside class="sidebar"><h2>📚 IV бөлім</h2><nav>
+    <button onclick="showPage('ch1')">1. Кіріспе</button>
+    <button onclick="showPage('ch2')">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')" class="active">3. Python синтаксисі</button>
+    <button onclick="showPage('ch4')">4. Шартты операторлар</button>
+    <button onclick="showPage('ch5')">5. Циклдер</button>
+    <button onclick="showPage('ch6')">6. Функциялар</button>
+    <button onclick="showPage('ch7')">7. Тізімдер мен жолдар</button>
+    <button onclick="showPage('ch8')">8. Қорытынды тест</button>
+  </nav></aside>
+  <div class="chapter-main">
+    <h2 class="ch-title">3-тарау. Python синтаксисі <span class="badge">Теория</span></h2>
+    <h3>Айнымалы дегеніміз не?</h3>
+    <p><b>Айнымалы</b> — деректерді сақтауға арналған атаулы орын. Python-да айнымалыны жариялау үшін типін көрсету қажет емес, тек мән беру жеткілікті:</p>
+    <pre><code>aty = "Айгүл"      # str
+zhasy = 15          # int
+boi = 1.65          # float
+student = True      # bool</code></pre>
+    <h3>Айнымалы атауларына қойылатын талаптар</h3>
+    <ul><li>✅ Әріптен немесе астыңғы сызықтан (<code>_</code>) басталуы керек</li><li>✅ Тек әріп, сан және <code>_</code> таңбаларынан тұруы керек</li><li>❌ Саннан басталмауы керек</li><li>❌ Python кілт сөздерін (<code>if</code>, <code>for</code>, <code>def</code>...) қолдануға болмайды</li></ul>
+    <div class="note warn"><b>⚠️ Маңызды:</b> Python-да айнымалы атаулары <b>регистрге сезімтал</b> — <code>San</code> мен <code>san</code> — екі бөлек айнымалы.</div>
+    <h3>Түсініктемелер (комментарийлер)</h3>
+    <pre><code># Бір жолдық түсініктеме
+san = 10  # Айнымалыға мән беру
+"""
+Көп жолдық түсініктеме.
+"""</code></pre>
+    <h3>Деректер типтерін түрлендіру</h3>
+    <table>
+      <tr><th>Функция</th><th>Қызметі</th><th>Мысал</th></tr>
+      <tr><td>int()</td><td>Бүтін санға айналдыру</td><td>int("15") → 15</td></tr>
+      <tr><td>float()</td><td>Нақты санға айналдыру</td><td>float("3.14") → 3.14</td></tr>
+      <tr><td>str()</td><td>Жолға айналдыру</td><td>str(42) → "42"</td></tr>
+      <tr><td>bool()</td><td>Логикалық типке айналдыру</td><td>bool(0) → False</td></tr>
+    </table>
+    <h3>Айнымалылар және деректер типтері</h3>
+    <table>
+      <tr><th>Тип</th><th>Мысал</th><th>Сипаттама</th></tr>
+      <tr><td>int</td><td>42, -7, 0</td><td>Бүтін сан</td></tr>
+      <tr><td>float</td><td>3.14, -0.5</td><td>Нақты сан</td></tr>
+      <tr><td>str</td><td>"Python"</td><td>Жол</td></tr>
+      <tr><td>bool</td><td>True, False</td><td>Логикалық</td></tr>
+    </table>
+    <pre><code>a = 10          # int
+b = 3.14        # float
+s = "Python"    # str
+flag = True     # bool
+print(type(a))  # &lt;class 'int'&gt;</code></pre>
+    <h3>Енгізу және шығару</h3>
+    <pre><code>name = input("Атыңыз: ")
+print("Сәлем,", name)
+
+san = int(input("Сан енгізіңіз: "))
+print("Квадраты:", san ** 2)</code></pre>
+    <div class="note warn"><b>Маңызды:</b> <code>input()</code> әрқашан <b>жол (str)</b> қайтарады.</div>
+    <h3>Арифметикалық операторлар</h3>
+    <table>
+      <tr><th>Оператор</th><th>Атауы</th><th>Мысал</th></tr>
+      <tr><td>+</td><td>Қосу</td><td>5 + 3 = 8</td></tr>
+      <tr><td>-</td><td>Азайту</td><td>5 - 3 = 2</td></tr>
+      <tr><td>*</td><td>Көбейту</td><td>5 * 3 = 15</td></tr>
+      <tr><td>/</td><td>Бөлу</td><td>7 / 2 = 3.5</td></tr>
+      <tr><td>//</td><td>Бүтін бөлу</td><td>7 // 2 = 3</td></tr>
+      <tr><td>%</td><td>Қалдық</td><td>7 % 2 = 1</td></tr>
+      <tr><td>**</td><td>Дәреже</td><td>2 ** 3 = 8</td></tr>
+    </table>
+
+    <h3>🎯 Интерактивті тапсырмалар</h3>
+
+    <div class="itask">
+      <h4>Тапсырма 3.1 — Сәйкестендіру</h4>
+      <div class="match-wrap" id="match3">
+        <div class="match-col"><h5>Мән</h5>
+          <div class="match-item" data-id="a">1. <code>42</code></div>
+          <div class="match-item" data-id="b">2. <code>3.14</code></div>
+          <div class="match-item" data-id="c">3. <code>"Python"</code></div>
+          <div class="match-item" data-id="d">4. <code>True</code></div>
+        </div>
+        <div class="match-col"><h5>Тип</h5>
+          <div class="match-item" data-id="c">A. str</div>
+          <div class="match-item" data-id="a">B. int</div>
+          <div class="match-item" data-id="d">C. bool</div>
+          <div class="match-item" data-id="b">D. float</div>
+        </div>
+      </div>
+      <button onclick="checkMatch('match3','rMatch3')">Тексеру</button>
+      <button class="btn-retry" onclick="resetMatch('match3','rMatch3')">🔄 Қайта орындау</button>
+      <div class="result" id="rMatch3"></div>
+    </div>
+
+    <!-- КОД ЖАЗУ ЕСЕПТЕРІ -->
+    <h3>💻 Код жазу есептері (Python)</h3>
+    <p style="font-size:.94rem;color:#6b7a90;">Төмендегі есептерді <b>өз Python кодыңызды жазып</b> шығарыңыз. Кодты «▶ Іске қосу» батырмасымен іске қосып, нәтижені көріңіз. Дайын болса «✓ Тексеру» батырмасын басыңыз.</p>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 3.1 — Екі санның қосындысы</h4>
+        <span class="diff diff-1">Жеңіл</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>a = 15</code> және <code>b = 27</code> айнымалыларын құрып, олардың қосындысын экранға шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>42</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct31_code" spellcheck="false">a = 15
+b = 27
+# осында қосындысын шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct31')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct31','42')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct31')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct31_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct31_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 3.2 — Квадраттар қосындысы</h4>
+        <span class="diff diff-2">Орташа</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>x = 3</code>, <code>y = 4</code> деп алып, <code>x² + y²</code> өрнегінің мәнін экранға шығарыңыз (дәреже үшін <code>**</code> қолданыңыз).<br>
+        <b>Күтілетін нәтиже:</b> <code>25</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct32_code" spellcheck="false">x = 3
+y = 4
+# x² + y² мәнін шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct32')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct32','25')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct32')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct32_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct32_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 3.3 — Бүтін бөлу және қалдық</h4>
+        <span class="diff diff-2">Орташа</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>100</code> санын <code>7</code>-ге бөлгендегі <b>бүтін бөлігін</b> (<code>//</code>) бірінші жолға, <b>қалдығын</b> (<code>%</code>) екінші жолға шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> екі жол:<br><code>14</code><br><code>2</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct33_code" spellcheck="false"># 100 // 7 және 100 % 7 мәндерін екі жолға шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct33')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct33','14\n2')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct33')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct33_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct33_res"></div>
+    </div>
+
+    <div class="itask">
+      <h4>Тапсырма 3.4 — Радио-нұсқа</h4>
+      <p style="font-size:.92rem;margin-bottom:12px;"><code>input()</code> функциясы қандай тип қайтарады?</p>
+      <div class="choice-group" id="t33b">
+        <label class="choice"><input type="radio" name="q33b" value="1"><span>int</span></label>
+        <label class="choice"><input type="radio" name="q33b" value="2"><span>float</span></label>
+        <label class="choice"><input type="radio" name="q33b" value="3"><span>str</span></label>
+        <label class="choice"><input type="radio" name="q33b" value="4"><span>bool</span></label>
+      </div>
+      <button onclick="check33b()">Тексеру</button>
+      <button class="btn-retry" onclick="resetChoice('t33b','r33b')">🔄 Қайта орындау</button>
+      <div class="result" id="r33b"></div>
+    </div>
+
+    <h3>📝 20 тест</h3>
+    <div class="quiz" id="quiz3"></div>
+    <div class="ch-nav">
+      <button onclick="showPage('ch2')">← Алдыңғы</button>
+      <button onclick="showPage('ch4')">Келесі →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 4 ТАРАУ -->
+<div class="page" id="page-ch4">
+<div class="chapter-wrap">
+  <aside class="sidebar"><h2>📚 IV бөлім</h2><nav>
+    <button onclick="showPage('ch1')">1. Кіріспе</button>
+    <button onclick="showPage('ch2')">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')">3. Python синтаксисі</button>
+    <button onclick="showPage('ch4')" class="active">4. Шартты операторлар</button>
+    <button onclick="showPage('ch5')">5. Циклдер</button>
+    <button onclick="showPage('ch6')">6. Функциялар</button>
+    <button onclick="showPage('ch7')">7. Тізімдер мен жолдар</button>
+    <button onclick="showPage('ch8')">8. Қорытынды тест</button>
+  </nav></aside>
+  <div class="chapter-main">
+    <h2 class="ch-title">4-тарау. Шартты операторлар <span class="badge">Теория</span></h2>
+    <h3>Шартты оператор дегеніміз не?</h3>
+    <p><b>Шартты оператор</b> — белгілі бір шарттың орындалуына байланысты әрекеттерді таңдауға мүмкіндік беретін құрылым.</p>
+    <h3>if / elif / else — блок-схема</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 620 600" width="620">
+        <defs><marker id="arwIf" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker></defs>
+        <ellipse cx="310" cy="28" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="310" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="310" y1="50" x2="310" y2="76" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwIf)"/>
+        <polygon points="230,80 370,80 390,116 250,116" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="310" y="103" text-anchor="middle" font-size="12" fill="#1e3a5f">san енгізу</text>
+        <line x1="310" y1="116" x2="310" y2="142" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwIf)"/>
+        <polygon points="310,144 420,197 310,250 200,197" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="310" y="202" text-anchor="middle" font-size="13" font-weight="700" fill="#721c24">san &gt; 0 ?</text>
+        <line x1="200" y1="197" x2="160" y2="197" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="160" y1="197" x2="160" y2="282" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwIf)"/>
+        <text x="182" y="188" text-anchor="middle" font-size="13" font-weight="700" fill="#28a745">Иә</text>
+        <polygon points="90,282 230,282 250,318 110,318" fill="#e9f8ee" stroke="#28a745" stroke-width="2"/>
+        <text x="170" y="305" text-anchor="middle" font-size="12" fill="#155724">"Оң сан"</text>
+        <line x1="180" y1="318" x2="180" y2="340" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="180" y1="340" x2="50" y2="340" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="50" y1="340" x2="50" y2="540" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="310" y1="250" x2="310" y2="290" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwIf)"/>
+        <text x="325" y="275" font-size="13" font-weight="700" fill="#dc3545">Жоқ</text>
+        <polygon points="310,292 420,345 310,398 200,345" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="310" y="350" text-anchor="middle" font-size="13" font-weight="700" fill="#721c24">san &lt; 0 ?</text>
+        <line x1="200" y1="345" x2="140" y2="345" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="140" y1="345" x2="140" y2="462" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwIf)"/>
+        <text x="162" y="336" text-anchor="middle" font-size="13" font-weight="700" fill="#28a745">Иә</text>
+        <polygon points="100,462 240,462 260,498 120,498" fill="#e9f8ee" stroke="#28a745" stroke-width="2"/>
+        <text x="180" y="485" text-anchor="middle" font-size="12" fill="#155724">"Теріс сан"</text>
+        <line x1="190" y1="498" x2="190" y2="540" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="420" y1="345" x2="440" y2="345" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="440" y1="345" x2="440" y2="462" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwIf)"/>
+        <text x="462" y="336" text-anchor="middle" font-size="13" font-weight="700" fill="#dc3545">Жоқ</text>
+        <polygon points="360,462 500,462 520,498 380,498" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="440" y="485" text-anchor="middle" font-size="12" fill="#721c24">"Нөл"</text>
+        <line x1="450" y1="498" x2="450" y2="540" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="50" y1="540" x2="450" y2="540" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="310" y1="540" x2="310" y2="556" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwIf)"/>
+        <ellipse cx="310" cy="578" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="310" y="584" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Соңы</text>
+      </svg>
+      <div class="fc-caption">if / elif / else — үш нұсқалы тармақталу</div>
+    </div>
+    <h3>if операторының жалпы құрылымы</h3>
+    <pre><code>if шарт1:
+    # шарт1 дұрыс болса
+elif шарт2:
+    # шарт2 дұрыс болса
+else:
+    # ешбір шарт дұрыс болмаса</code></pre>
+    <h3>Шегініс (indentation) ережесі</h3>
+    <p>Python-да шегініс — синтаксистің маңызды бөлігі. Шегініс <b>4 бос орын</b> немесе <b>1 Tab</b> арқылы жасалады.</p>
+    <pre><code># ДҰРЫС
+if san > 0:
+    print("Оң")    # 4 бос орын
+
+# ҚАТЕ
+if san > 0:
+print("Оң")        # шегініс жоқ</code></pre>
+    <h3>Салыстыру операторлары</h3>
+    <table>
+      <tr><th>Оператор</th><th>Мағынасы</th></tr>
+      <tr><td>==</td><td>Тең</td></tr>
+      <tr><td>!=</td><td>Тең емес</td></tr>
+      <tr><td>&gt;</td><td>Үлкен</td></tr>
+      <tr><td>&lt;</td><td>Кіші</td></tr>
+      <tr><td>&gt;=</td><td>Үлкен немесе тең</td></tr>
+      <tr><td>&lt;=</td><td>Кіші немесе тең</td></tr>
+    </table>
+    <h3>Логикалық операторлар</h3>
+    <table>
+      <tr><th>Оператор</th><th>Мағынасы</th><th>Мысал</th></tr>
+      <tr><td>and</td><td>Және</td><td>a &gt; 0 and a &lt; 10</td></tr>
+      <tr><td>or</td><td>Немесе</td><td>a &lt; 0 or a &gt; 100</td></tr>
+      <tr><td>not</td><td>Емес</td><td>not (a == 5)</td></tr>
+    </table>
+    <h3>if / elif / else құрылымы</h3>
+    <pre><code>san = int(input("Сан енгізіңіз: "))
+if san > 0:
+    print("Оң сан")
+elif san < 0:
+    print("Теріс сан")
+else:
+    print("Нөл")</code></pre>
+
+    <h3>🎯 Интерактивті тапсырмалар</h3>
+    <div class="itask">
+      <h4>Тапсырма 4.1 — Сәйкестендіру</h4>
+      <div class="match-wrap" id="match4">
+        <div class="match-col"><h5>Оператор</h5>
+          <div class="match-item" data-id="a">1. <code>==</code></div>
+          <div class="match-item" data-id="b">2. <code>!=</code></div>
+          <div class="match-item" data-id="c">3. <code>and</code></div>
+          <div class="match-item" data-id="d">4. <code>or</code></div>
+        </div>
+        <div class="match-col"><h5>Мағынасы</h5>
+          <div class="match-item" data-id="c">A. Және</div>
+          <div class="match-item" data-id="a">B. Тең</div>
+          <div class="match-item" data-id="d">C. Немесе</div>
+          <div class="match-item" data-id="b">D. Тең емес</div>
+        </div>
+      </div>
+      <button onclick="checkMatch('match4','rMatch4')">Тексеру</button>
+      <button class="btn-retry" onclick="resetMatch('match4','rMatch4')">🔄 Қайта орындау</button>
+      <div class="result" id="rMatch4"></div>
+    </div>
+
+    <!-- КОД ЖАЗУ ЕСЕПТЕРІ -->
+    <h3>💻 Код жазу есептері (Python)</h3>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 4.1 — Жұп немесе тақ</h4>
+        <span class="diff diff-1">Жеңіл</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>san = 17</code> айнымалысы берілген. Егер сан <b>жұп</b> болса <code>Жұп</code>, әйтпесе <code>Тақ</code> деп шығаратын код жазыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>Тақ</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct41_code" spellcheck="false">san = 17
+# if / else арқылы жұп/тақ анықтаңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct41')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct41','Тақ')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct41')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct41_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct41_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 4.2 — Үш санның ең үлкені</h4>
+        <span class="diff diff-2">Орташа</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>a = 45</code>, <code>b = 78</code>, <code>c = 23</code>. <code>if / elif / else</code> арқылы ең үлкен санды экранға шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>78</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct42_code" spellcheck="false">a = 45
+b = 78
+c = 23
+# ең үлкенін тауып шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct42')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct42','78')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct42')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct42_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct42_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 4.3 — Баға анықтау</h4>
+        <span class="diff diff-3">Қиын</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>ball = 78</code>. Шартты операторлар арқылы бағаны шығарыңыз:<br>
+        • <code>ball &gt;= 85</code> → <code>5</code><br>
+        • <code>ball &gt;= 70</code> → <code>4</code><br>
+        • <code>ball &gt;= 50</code> → <code>3</code><br>
+        • әйтпесе → <code>2</code><br>
+        <b>Күтілетін нәтиже:</b> <code>4</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct43_code" spellcheck="false">ball = 78
+# if / elif / else арқылы бағаны шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct43')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct43','4')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct43')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct43_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct43_res"></div>
+    </div>
+
+    <div class="itask">
+      <h4>Тапсырма 4.4 — Радио-нұсқа</h4>
+      <pre><code>x = 15
+if x > 10:
+    print("A")
+else:
+    print("B")</code></pre>
+      <div class="choice-group" id="t43b">
+        <label class="choice"><input type="radio" name="q43b" value="1"><span>A</span></label>
+        <label class="choice"><input type="radio" name="q43b" value="2"><span>B</span></label>
+        <label class="choice"><input type="radio" name="q43b" value="3"><span>A B</span></label>
+        <label class="choice"><input type="radio" name="q43b" value="4"><span>Қате</span></label>
+      </div>
+      <button onclick="check43b()">Тексеру</button>
+      <button class="btn-retry" onclick="resetChoice('t43b','r43b')">🔄 Қайта орындау</button>
+      <div class="result" id="r43b"></div>
+    </div>
+
+    <h3>📝 20 тест</h3>
+    <div class="quiz" id="quiz4"></div>
+    <div class="ch-nav">
+      <button onclick="showPage('ch3')">← Алдыңғы</button>
+      <button onclick="showPage('ch5')">Келесі →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 5 ТАРАУ -->
+<div class="page" id="page-ch5">
+<div class="chapter-wrap">
+  <aside class="sidebar"><h2>📚 IV бөлім</h2><nav>
+    <button onclick="showPage('ch1')">1. Кіріспе</button>
+    <button onclick="showPage('ch2')">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')">3. Python синтаксисі</button>
+    <button onclick="showPage('ch4')">4. Шартты операторлар</button>
+    <button onclick="showPage('ch5')" class="active">5. Циклдер</button>
+    <button onclick="showPage('ch6')">6. Функциялар</button>
+    <button onclick="showPage('ch7')">7. Тізімдер мен жолдар</button>
+    <button onclick="showPage('ch8')">8. Қорытынды тест</button>
+  </nav></aside>
+  <div class="chapter-main">
+    <h2 class="ch-title">5-тарау. Циклдер <span class="badge">Теория</span></h2>
+    <h3>Цикл дегеніміз не?</h3>
+    <p><b>Цикл</b> — белгілі бір әрекеттер тізбегін бірнеше рет қайталауға арналған құрылым. Python-да екі негізгі цикл бар: <code>for</code> және <code>while</code>.</p>
+    <h3>for циклі — блок-схема</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 520 500" width="520">
+        <defs><marker id="arwF" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker></defs>
+        <ellipse cx="260" cy="28" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="260" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="260" y1="50" x2="260" y2="78" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwF)"/>
+        <polygon points="180,82 320,82 340,118 200,118" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="260" y="105" text-anchor="middle" font-size="12" fill="#1e3a5f">n енгізу</text>
+        <line x1="260" y1="118" x2="260" y2="144" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwF)"/>
+        <rect x="150" y="148" width="220" height="42" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="260" y="174" text-anchor="middle" font-size="12" fill="#1e3a5f">for i in range(n):</text>
+        <line x1="260" y1="190" x2="260" y2="216" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwF)"/>
+        <rect x="150" y="220" width="220" height="42" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="260" y="246" text-anchor="middle" font-size="12" fill="#1e3a5f">print(i)  ← цикл денесі</text>
+        <line x1="260" y1="262" x2="260" y2="288" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwF)"/>
+        <polygon points="260,290 380,344 260,398 140,344" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="260" y="342" text-anchor="middle" font-size="13" font-weight="700" fill="#721c24">i &lt; n ?</text>
+        <text x="260" y="360" text-anchor="middle" font-size="11" fill="#721c24">(келесі элемент бар ма?)</text>
+        <line x1="140" y1="344" x2="50" y2="344" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="50" y1="344" x2="50" y2="241" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="50" y1="241" x2="150" y2="241" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwF)"/>
+        <text x="95" y="334" text-anchor="middle" font-size="13" font-weight="700" fill="#28a745">Иә</text>
+        <line x1="260" y1="398" x2="260" y2="432" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwF)"/>
+        <text x="275" y="420" font-size="13" font-weight="700" fill="#dc3545">Жоқ</text>
+        <ellipse cx="260" cy="458" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="260" y="464" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Соңы</text>
+      </svg>
+      <div class="fc-caption">for циклі — тізбектің әр элементі бойынша өтеді</div>
+    </div>
+    <h3>while циклі — блок-схема</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 560 520" width="560">
+        <defs><marker id="arwW" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker></defs>
+        <ellipse cx="300" cy="28" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="300" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="300" y1="50" x2="300" y2="78" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwW)"/>
+        <rect x="200" y="82" width="200" height="42" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="300" y="108" text-anchor="middle" font-size="12" fill="#1e3a5f">i = 1</text>
+        <line x1="300" y1="124" x2="300" y2="150" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwW)"/>
+        <polygon points="300,152 420,212 300,272 180,212" fill="#fdecec" stroke="#dc3545" stroke-width="2"/>
+        <text x="300" y="208" text-anchor="middle" font-size="13" font-weight="700" fill="#721c24">i &lt;= 5 ?</text>
+        <text x="300" y="226" text-anchor="middle" font-size="11" fill="#721c24">(шарт)</text>
+        <line x1="180" y1="212" x2="60" y2="212" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="60" y1="212" x2="60" y2="320" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="60" y1="320" x2="150" y2="320" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwW)"/>
+        <text x="115" y="202" text-anchor="middle" font-size="13" font-weight="700" fill="#28a745">Иә</text>
+        <polygon points="140,302 280,302 300,338 160,338" fill="#e9f8ee" stroke="#28a745" stroke-width="2"/>
+        <text x="220" y="325" text-anchor="middle" font-size="12" fill="#155724">i шығару</text>
+        <line x1="230" y1="338" x2="230" y2="360" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwW)"/>
+        <rect x="160" y="362" width="140" height="40" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="230" y="387" text-anchor="middle" font-size="12" fill="#1e3a5f">i = i + 1</text>
+        <line x1="230" y1="402" x2="230" y2="430" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="230" y1="430" x2="30" y2="430" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="30" y1="430" x2="30" y2="140" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="30" y1="140" x2="296" y2="140" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwW)"/>
+        <line x1="420" y1="212" x2="500" y2="212" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="500" y1="212" x2="500" y2="470" stroke="#1e3a5f" stroke-width="2"/>
+        <line x1="500" y1="470" x2="355" y2="470" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwW)"/>
+        <text x="460" y="202" text-anchor="middle" font-size="13" font-weight="700" fill="#dc3545">Жоқ</text>
+        <ellipse cx="280" cy="470" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="280" y="476" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Соңы</text>
+      </svg>
+      <div class="fc-caption">while циклі — шарт True болғанша қайталанады</div>
+    </div>
+    <h3>for және while циклдерінің айырмашылығы</h3>
+    <table>
+      <tr><th>for циклі</th><th>while циклі</th></tr>
+      <tr><td>Қайталау саны алдын ала белгілі</td><td>Қайталау саны шартқа байланысты</td></tr>
+      <tr><td>Тізбек бойынша өтеді</td><td>Шарт True болғанша қайталанады</td></tr>
+      <tr><td><code>for i in range(5):</code></td><td><code>while i &lt; 5:</code></td></tr>
+    </table>
+    <h3>Циклді басқару операторлары</h3>
+    <ul><li><b>break</b> — циклді толық тоқтатады, циклден шығады</li><li><b>continue</b> — ағымдағы қадамды өткізіп жіберіп, келесі қадамға өтеді</li></ul>
+    <h3>range() функциясы</h3>
+    <table>
+      <tr><th>Жазылуы</th><th>Нәтижесі</th></tr>
+      <tr><td>range(5)</td><td>0,1,2,3,4</td></tr>
+      <tr><td>range(1, 5)</td><td>1,2,3,4</td></tr>
+      <tr><td>range(0, 10, 2)</td><td>0,2,4,6,8</td></tr>
+      <tr><td>range(5, 0, -1)</td><td>5,4,3,2,1</td></tr>
+    </table>
+    <h3>for циклі</h3>
+    <pre><code>for i in range(1, 6):
+    print(i)
+
+sanlar = [10, 20, 30]
+for s in sanlar:
+    print(s)</code></pre>
+    <h3>while циклі</h3>
+    <pre><code>i = 1
+while i <= 5:
+    print(i)
+    i += 1</code></pre>
+    <div class="note warn"><b>Абайлаңыз:</b> <code>while</code> шарты әрқашан True болса — цикл <b>шексіз</b>.</div>
+    <h3>break және continue</h3>
+    <pre><code>for i in range(1, 10):
+    if i == 5:
+        break
+    print(i)</code></pre>
+
+    <h3>🎯 Интерактивті тапсырмалар</h3>
+    <div class="itask">
+      <h4>Тапсырма 5.1 — Сәйкестендіру</h4>
+      <div class="match-wrap" id="match5">
+        <div class="match-col"><h5>range()</h5>
+          <div class="match-item" data-id="a">1. <code>range(5)</code></div>
+          <div class="match-item" data-id="b">2. <code>range(1,5)</code></div>
+          <div class="match-item" data-id="c">3. <code>range(0,10,2)</code></div>
+          <div class="match-item" data-id="d">4. <code>range(5,0,-1)</code></div>
+        </div>
+        <div class="match-col"><h5>Нәтижесі</h5>
+          <div class="match-item" data-id="d">A. 5,4,3,2,1</div>
+          <div class="match-item" data-id="a">B. 0,1,2,3,4</div>
+          <div class="match-item" data-id="c">C. 0,2,4,6,8</div>
+          <div class="match-item" data-id="b">D. 1,2,3,4</div>
+        </div>
+      </div>
+      <button onclick="checkMatch('match5','rMatch5')">Тексеру</button>
+      <button class="btn-retry" onclick="resetMatch('match5','rMatch5')">🔄 Қайта орындау</button>
+      <div class="result" id="rMatch5"></div>
+    </div>
+
+    <!-- КОД ЖАЗУ ЕСЕПТЕРІ -->
+    <h3>💻 Код жазу есептері (Python)</h3>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 5.1 — 1-ден 10-ға дейін санау</h4>
+        <span class="diff diff-1">Жеңіл</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>for</code> және <code>range()</code> арқылы 1-ден 10-ға дейінгі сандарды әрқайсысын бөлек жолға шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> 10 жол: <code>1</code>, <code>2</code>, ..., <code>10</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct51_code" spellcheck="false"># for циклін қолданып 1-ден 10-ға дейін шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct51')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct51','1\n2\n3\n4\n5\n6\n7\n8\n9\n10')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct51')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct51_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct51_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 5.2 — Жұп сандардың қосындысы</h4>
+        <span class="diff diff-2">Орташа</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> 1-ден 20-ға дейінгі барлық <b>жұп</b> сандардың қосындысын тауып шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>110</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct52_code" spellcheck="false">s = 0
+# 1-ден 20-ға дейінгі жұп сандарды қосыңыз
+# нәтижені шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct52')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct52','110')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct52')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct52_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct52_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 5.3 — Көбейту кестесі</h4>
+        <span class="diff diff-3">Қиын</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>5</code> санының көбейту кестесін (5×1, 5×2, …, 5×10) әр нәтижені бөлек жолға шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> 10 жол: <code>5</code>, <code>10</code>, <code>15</code>, <code>20</code>, <code>25</code>, <code>30</code>, <code>35</code>, <code>40</code>, <code>45</code>, <code>50</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct53_code" spellcheck="false"># 5-тің көбейту кестесін (1-ден 10-ға дейін) шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct53')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct53','5\n10\n15\n20\n25\n30\n35\n40\n45\n50')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct53')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct53_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct53_res"></div>
+    </div>
+
+    <div class="itask">
+      <h4>Тапсырма 5.4 — Радио-нұсқа</h4>
+      <pre><code>for i in range(1, 8):
+    if i == 4:
+        break
+    print(i)</code></pre>
+      <div class="choice-group" id="t53b">
+        <label class="choice"><input type="radio" name="q53b" value="1"><span>1 2 3</span></label>
+        <label class="choice"><input type="radio" name="q53b" value="2"><span>1 2 3 4</span></label>
+        <label class="choice"><input type="radio" name="q53b" value="3"><span>1 2 3 4 5 6 7</span></label>
+        <label class="choice"><input type="radio" name="q53b" value="4"><span>4</span></label>
+      </div>
+      <button onclick="check53b()">Тексеру</button>
+      <button class="btn-retry" onclick="resetChoice('t53b','r53b')">🔄 Қайта орындау</button>
+      <div class="result" id="r53b"></div>
+    </div>
+
+    <h3>📝 20 тест</h3>
+    <div class="quiz" id="quiz5"></div>
+    <div class="ch-nav">
+      <button onclick="showPage('ch4')">← Алдыңғы</button>
+      <button onclick="showPage('ch6')">Келесі →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 6 ТАРАУ -->
+<div class="page" id="page-ch6">
+<div class="chapter-wrap">
+  <aside class="sidebar"><h2>📚 IV бөлім</h2><nav>
+    <button onclick="showPage('ch1')">1. Кіріспе</button>
+    <button onclick="showPage('ch2')">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')">3. Python синтаксисі</button>
+    <button onclick="showPage('ch4')">4. Шартты операторлар</button>
+    <button onclick="showPage('ch5')">5. Циклдер</button>
+    <button onclick="showPage('ch6')" class="active">6. Функциялар</button>
+    <button onclick="showPage('ch7')">7. Тізімдер мен жолдар</button>
+    <button onclick="showPage('ch8')">8. Қорытынды тест</button>
+  </nav></aside>
+  <div class="chapter-main">
+    <h2 class="ch-title">6-тарау. Функциялар <span class="badge">Теория</span></h2>
+    <h3>Функция дегеніміз не?</h3>
+    <p><b>Функция</b> — белгілі бір міндетті орындайтын, атауы бар код блогы.</p>
+    <h3>Функция шақыру — блок-схема</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 640 320" width="640">
+        <defs>
+          <marker id="arwFn" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker>
+          <marker id="arwFnD" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#dc3545"/></marker>
+          <marker id="arwFnG" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#28a745"/></marker>
+        </defs>
+        <text x="160" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#3776ab">Негізгі программа</text>
+        <ellipse cx="160" cy="52" rx="70" ry="20" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="160" y="58" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="160" y1="72" x2="160" y2="100" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwFn)"/>
+        <rect x="55" y="104" width="210" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="160" y="131" text-anchor="middle" font-size="12" fill="#1e3a5f">a = 3; b = 5</text>
+        <line x1="160" y1="148" x2="160" y2="176" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwFn)"/>
+        <rect x="55" y="180" width="210" height="44" rx="6" fill="#fff3cd" stroke="#ffc107" stroke-width="2"/>
+        <text x="160" y="207" text-anchor="middle" font-size="12" fill="#8a6d00">kosu(a, b) шақыру</text>
+        <line x1="160" y1="224" x2="160" y2="252" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwFn)"/>
+        <ellipse cx="160" cy="278" rx="70" ry="20" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="160" y="284" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">Соңы</text>
+        <text x="480" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#3776ab">Функция kosu(a, b)</text>
+        <ellipse cx="480" cy="52" rx="80" ry="20" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="480" y="58" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">Кіру</text>
+        <line x1="480" y1="72" x2="480" y2="100" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwFn)"/>
+        <rect x="370" y="104" width="220" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="480" y="131" text-anchor="middle" font-size="12" fill="#1e3a5f">natizhe = a + b</text>
+        <line x1="480" y1="148" x2="480" y2="176" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwFn)"/>
+        <rect x="370" y="180" width="220" height="44" rx="6" fill="#e9f8ee" stroke="#28a745" stroke-width="2"/>
+        <text x="480" y="207" text-anchor="middle" font-size="12" fill="#155724">return natizhe</text>
+        <line x1="480" y1="224" x2="480" y2="252" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwFn)"/>
+        <ellipse cx="480" cy="278" rx="80" ry="20" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="480" y="284" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a5f">Шығу</text>
+        <line x1="265" y1="202" x2="370" y2="202" stroke="#dc3545" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arwFnD)"/>
+        <text x="318" y="194" text-anchor="middle" font-size="11" font-weight="700" fill="#dc3545">шақыру</text>
+        <line x1="400" y1="278" x2="320" y2="278" stroke="#28a745" stroke-width="2" stroke-dasharray="6,4"/>
+        <line x1="320" y1="278" x2="320" y2="206" stroke="#28a745" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arwFnG)"/>
+        <text x="360" y="298" text-anchor="middle" font-size="11" font-weight="700" fill="#28a745">қайтару</text>
+      </svg>
+      <div class="fc-caption">Функцияны шақыру және оның жұмысы</div>
+    </div>
+    <h3>Функцияның артықшылықтары</h3>
+    <ul><li>✅ <b>Кодты қайта пайдалану</b></li><li>✅ <b>Құрылымдылық</b></li><li>✅ <b>Оқуға жеңілдік</b></li><li>✅ <b>Қателерді табу</b></li></ul>
+    <h3>Функция түрлері</h3>
+    <table>
+      <tr><th>Түрі</th><th>Сипаттамасы</th><th>Мысал</th></tr>
+      <tr><td>Кірістірілген</td><td>Python-да дайын</td><td>print(), len(), input()</td></tr>
+      <tr><td>Пайдаланушылық</td><td>Өзіміз жасаймыз</td><td>def kosu(): ...</td></tr>
+      <tr><td>Қайтаратын</td><td>return арқылы мән қайтарады</td><td>def kvadrat(x): return x*x</td></tr>
+      <tr><td>Рекурсивті</td><td>Өзін-өзі шақырады</td><td>def faktorial(n): ...</td></tr>
+    </table>
+    <h3>Функция құру</h3>
+    <pre><code>def kosu(a, b):
+    """Екі санның қосындысын қайтарады"""
+    return a + b
+
+natizhe = kosu(3, 5)
+print(natizhe)   # 8</code></pre>
+    <h3>Әдепкі параметр</h3>
+    <pre><code>def salamdau(aty="Қонақ"):
+    print("Сәлем,", aty)
+
+salamdau()
+salamdau("Айгүл")</code></pre>
+    <h3>Рекурсия</h3>
+    <pre><code>def faktorial(n):
+    if n == 0:
+        return 1
+    return n * faktorial(n - 1)
+
+print(faktorial(5))   # 120</code></pre>
+
+    <h3>🎯 Интерактивті тапсырмалар</h3>
+    <div class="itask">
+      <h4>Тапсырма 6.1 — Сәйкестендіру</h4>
+      <div class="match-wrap" id="match6">
+        <div class="match-col"><h5>Ұғым</h5>
+          <div class="match-item" data-id="a">1. <code>def</code></div>
+          <div class="match-item" data-id="b">2. <code>return</code></div>
+          <div class="match-item" data-id="c">3. Рекурсия</div>
+          <div class="match-item" data-id="d">4. Параметр</div>
+        </div>
+        <div class="match-col"><h5>Сипаттамасы</h5>
+          <div class="match-item" data-id="d">A. Функцияға берілетін мән</div>
+          <div class="match-item" data-id="a">B. Функция құру кілт сөзі</div>
+          <div class="match-item" data-id="c">C. Функцияның өзін-өзі шақыруы</div>
+          <div class="match-item" data-id="b">D. Нәтижені қайтару</div>
+        </div>
+      </div>
+      <button onclick="checkMatch('match6','rMatch6')">Тексеру</button>
+      <button class="btn-retry" onclick="resetMatch('match6','rMatch6')">🔄 Қайта орындау</button>
+      <div class="result" id="rMatch6"></div>
+    </div>
+
+    <!-- КОД ЖАЗУ ЕСЕПТЕРІ -->
+    <h3>💻 Код жазу есептері (Python)</h3>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 6.1 — Квадрат функциясы</h4>
+        <span class="diff diff-1">Жеңіл</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>kvadrat(x)</code> функциясын жасаңыз — ол санның квадратын қайтарады. <code>kvadrat(7)</code> шақырып, нәтижені экранға шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>49</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct61_code" spellcheck="false"># kvadrat(x) функциясын жасаңыз
+# def kvadrat(x):
+#     ...
+
+print(kvadrat(7))</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct61')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct61','49')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct61')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct61_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct61_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 6.2 — Рекурсивті факториал</h4>
+        <span class="diff diff-3">Қиын</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>faktorial(n)</code> рекурсивті функциясын жазыңыз. <code>faktorial(6)</code> шақырып, нәтижені шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>720</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct62_code" spellcheck="false">def faktorial(n):
+    # n! мәнін рекурсия арқылы қайтарыңыз
+    pass
+
+print(faktorial(6))</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct62')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct62','720')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct62')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct62_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct62_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 6.3 — Тізім қосындысы (функция)</h4>
+        <span class="diff diff-2">Орташа</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> Тізімді қабылдап, оның элементтерінің қосындысын қайтаратын <code>kosyndy(tizim)</code> функциясын жасаңыз. <code>[1, 2, 3, 4, 5]</code> тізімімен шақырыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>15</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct63_code" spellcheck="false">def kosyndy(tizim):
+    # тізім элементтерінің қосындысын қайтарыңыз
+    pass
+
+print(kosyndy([1, 2, 3, 4, 5]))</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct63')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct63','15')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct63')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct63_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct63_res"></div>
+    </div>
+
+    <div class="itask">
+      <h4>Тапсырма 6.4 — Радио-нұсқа</h4>
+      <pre><code>def kvadrat(x):
+    return x * x
+
+print(kvadrat(6))</code></pre>
+      <div class="choice-group" id="t63b">
+        <label class="choice"><input type="radio" name="q63b" value="1"><span>12</span></label>
+        <label class="choice"><input type="radio" name="q63b" value="2"><span>36</span></label>
+        <label class="choice"><input type="radio" name="q63b" value="3"><span>6</span></label>
+        <label class="choice"><input type="radio" name="q63b" value="4"><span>Қате</span></label>
+      </div>
+      <button onclick="check63b()">Тексеру</button>
+      <button class="btn-retry" onclick="resetChoice('t63b','r63b')">🔄 Қайта орындау</button>
+      <div class="result" id="r63b"></div>
+    </div>
+
+    <h3>📝 20 тест</h3>
+    <div class="quiz" id="quiz6"></div>
+    <div class="ch-nav">
+      <button onclick="showPage('ch5')">← Алдыңғы</button>
+      <button onclick="showPage('ch7')">Келесі →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 7 ТАРАУ -->
+<div class="page" id="page-ch7">
+<div class="chapter-wrap">
+  <aside class="sidebar"><h2>📚 IV бөлім</h2><nav>
+    <button onclick="showPage('ch1')">1. Кіріспе</button>
+    <button onclick="showPage('ch2')">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')">3. Python синтаксисі</button>
+    <button onclick="showPage('ch4')">4. Шартты операторлар</button>
+    <button onclick="showPage('ch5')">5. Циклдер</button>
+    <button onclick="showPage('ch6')">6. Функциялар</button>
+    <button onclick="showPage('ch7')" class="active">7. Тізімдер мен жолдар</button>
+    <button onclick="showPage('ch8')">8. Қорытынды тест</button>
+  </nav></aside>
+  <div class="chapter-main">
+    <h2 class="ch-title">7-тарау. Тізімдер мен жолдар <span class="badge">Теория</span></h2>
+    <h3>Деректер құрылымы дегеніміз не?</h3>
+    <p><b>Деректер құрылымы</b> — деректерді сақтау және өңдеу тәсілі. Python-да ең жиі қолданылатын құрылымдар: <b>тізім (list)</b>, <b>жол (str)</b>, <b>кортеж (tuple)</b>, <b>сөздік (dict)</b>, <b>жиын (set)</b>.</p>
+    <h3>Тізімді өңдеу — блок-схема</h3>
+    <div class="flowchart">
+      <svg viewBox="0 0 480 420" width="480">
+        <defs><marker id="arwLst" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1e3a5f"/></marker></defs>
+        <ellipse cx="240" cy="28" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="240" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Басы</text>
+        <line x1="240" y1="50" x2="240" y2="76" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwLst)"/>
+        <rect x="100" y="80" width="280" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="240" y="107" text-anchor="middle" font-size="12" fill="#1e3a5f">sanlar = [3, 1, 4, 1, 5]</text>
+        <line x1="240" y1="124" x2="240" y2="150" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwLst)"/>
+        <rect x="120" y="154" width="240" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="240" y="181" text-anchor="middle" font-size="12" fill="#1e3a5f">sanlar.append(9)</text>
+        <line x1="240" y1="198" x2="240" y2="224" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwLst)"/>
+        <rect x="120" y="228" width="240" height="44" rx="6" fill="#eaf1fb" stroke="#3776ab" stroke-width="2"/>
+        <text x="240" y="255" text-anchor="middle" font-size="12" fill="#1e3a5f">sanlar.sort()</text>
+        <line x1="240" y1="272" x2="240" y2="298" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwLst)"/>
+        <polygon points="150,302 310,302 330,338 170,338" fill="#e7f6f9" stroke="#17a2b8" stroke-width="2"/>
+        <text x="240" y="325" text-anchor="middle" font-size="12" fill="#1e3a5f">sanlar шығару</text>
+        <line x1="240" y1="338" x2="240" y2="364" stroke="#1e3a5f" stroke-width="2" marker-end="url(#arwLst)"/>
+        <ellipse cx="240" cy="388" rx="75" ry="22" fill="#fff8d6" stroke="#ffd700" stroke-width="2"/>
+        <text x="240" y="394" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a5f">Соңы</text>
+      </svg>
+      <div class="fc-caption">Тізімді өңдеу — қосу, сұрыптау, шығару</div>
+    </div>
+    <h3>Тізім (list) ерекшеліктері</h3>
+    <ul><li>✅ Реттелген — элементтердің реті маңызды</li><li>✅ Өзгертілетін — элементтерді қосу, өшіру, өзгертуге болады</li><li>✅ Индекстелген — әр элементтің нөмірі бар (0-ден басталады)</li></ul>
+    <h3>Индекстеу және кесу (slicing)</h3>
+    <table>
+      <tr><th>Өрнек</th><th>Мағынасы</th><th>Мысал</th></tr>
+      <tr><td>a[0]</td><td>Бірінші элемент</td><td>[10,20,30] → 10</td></tr>
+      <tr><td>a[-1]</td><td>Соңғы элемент</td><td>[10,20,30] → 30</td></tr>
+      <tr><td>a[1:3]</td><td>1-ден 3-ке дейін (3 кірмейді)</td><td>[10,20,30,40] → [20,30]</td></tr>
+    </table>
+    <h3>Жиі қолданылатын жол әдістері</h3>
+    <table>
+      <tr><th>Әдіс</th><th>Қызметі</th><th>Мысал</th></tr>
+      <tr><td>upper()</td><td>Бас әріпке айналдыру</td><td>"abc".upper() → "ABC"</td></tr>
+      <tr><td>lower()</td><td>Кіші әріпке айналдыру</td><td>"ABC".lower() → "abc"</td></tr>
+      <tr><td>split()</td><td>Бөліктерге бөлу</td><td>"a,b,c".split(",") → ["a","b","c"]</td></tr>
+      <tr><td>replace()</td><td>Ауыстыру</td><td>"abc".replace("a","x") → "xbc"</td></tr>
+      <tr><td>count()</td><td>Санын санау</td><td>"hello".count("l") → 2</td></tr>
+    </table>
+    <h3>Тізімдер</h3>
+    <pre><code>sanlar = [3, 1, 4, 1, 5]
+print(sanlar[0])       # 3
+print(len(sanlar))     # 5
+
+sanlar.append(9)
+sanlar.sort()
+print(sanlar)          # [1, 1, 3, 4, 5, 9]</code></pre>
+    <h3>Жиі қолданылатын әдістер</h3>
+    <table>
+      <tr><th>Әдіс</th><th>Қызметі</th></tr>
+      <tr><td>append(x)</td><td>Соңына элемент қосу</td></tr>
+      <tr><td>remove(x)</td><td>x-ті өшіру</td></tr>
+      <tr><td>sort()</td><td>Сұрыптау</td></tr>
+      <tr><td>len(list)</td><td>Ұзындығы</td></tr>
+    </table>
+    <h3>Жолдар</h3>
+    <pre><code>s = "Python"
+print(s[0])         # P
+print(s[-1])        # n
+print(s[1:4])       # yth
+print(len(s))       # 6
+print(s.upper())    # PYTHON</code></pre>
+
+    <h3>🎯 Интерактивті тапсырмалар</h3>
+    <div class="itask">
+      <h4>Тапсырма 7.1 — Сәйкестендіру</h4>
+      <div class="match-wrap" id="match7">
+        <div class="match-col"><h5>Әдіс</h5>
+          <div class="match-item" data-id="a">1. <code>append(x)</code></div>
+          <div class="match-item" data-id="b">2. <code>remove(x)</code></div>
+          <div class="match-item" data-id="c">3. <code>sort()</code></div>
+          <div class="match-item" data-id="d">4. <code>len()</code></div>
+        </div>
+        <div class="match-col"><h5>Қызметі</h5>
+          <div class="match-item" data-id="c">A. Сұрыптау</div>
+          <div class="match-item" data-id="a">B. Соңына қосу</div>
+          <div class="match-item" data-id="d">C. Ұзындығын табу</div>
+          <div class="match-item" data-id="b">D. Элементті өшіру</div>
+        </div>
+      </div>
+      <button onclick="checkMatch('match7','rMatch7')">Тексеру</button>
+      <button class="btn-retry" onclick="resetMatch('match7','rMatch7')">🔄 Қайта орындау</button>
+      <div class="result" id="rMatch7"></div>
+    </div>
+
+    <!-- КОД ЖАЗУ ЕСЕПТЕРІ -->
+    <h3>💻 Код жазу есептері (Python)</h3>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 7.1 — Тізім элементтерінің қосындысы</h4>
+        <span class="diff diff-1">Жеңіл</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>[5, 10, 15, 20]</code> тізімі берілген. Цикл арқылы барлық элементтерінің қосындысын тауып шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>50</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct71_code" spellcheck="false">a = [5, 10, 15, 20]
+# цикл арқылы қосындысын табыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct71')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct71','50')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct71')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct71_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct71_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 7.2 — Жолды бас әріпке айналдыру</h4>
+        <span class="diff diff-1">Жеңіл</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>s = "python"</code> жолын <code>upper()</code> әдісі арқылы бас әріпке айналдырып шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>PYTHON</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct72_code" spellcheck="false">s = "python"
+# бас әріпке айналдырып шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct72')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct72','PYTHON')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct72')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct72_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct72_res"></div>
+    </div>
+
+    <div class="code-task">
+      <div class="ct-head">
+        <h4>💻 Есеп 7.3 — Жұп сандарды санау</h4>
+        <span class="diff diff-2">Орташа</span>
+      </div>
+      <div class="task-desc">
+        <b>Тапсырма:</b> <code>[3, 7, 2, 9, 4, 8, 1]</code> тізіміндегі <b>жұп</b> сандардың санын шығарыңыз.<br>
+        <b>Күтілетін нәтиже:</b> <code>3</code>
+      </div>
+      <div class="editor-label">main.py</div>
+      <textarea id="ct73_code" spellcheck="false">a = [3, 7, 2, 9, 4, 8, 1]
+# жұп сандардың санын шығарыңыз</textarea>
+      <div class="ct-buttons">
+        <button class="run-btn" onclick="runCode('ct73')">▶ Іске қосу</button>
+        <button class="check-btn" onclick="checkCode('ct73','3')">✓ Тексеру</button>
+        <button class="retry-btn" onclick="resetCode('ct73')">🔄 Тазалау</button>
+      </div>
+      <div class="output-label">Шығыс:</div>
+      <div class="output empty" id="ct73_out">— әзірге бос —</div>
+      <div class="ct-result" id="ct73_res"></div>
+    </div>
+
+    <div class="itask">
+      <h4>Тапсырма 7.4 — Радио-нұсқа</h4>
+      <p style="font-size:.92rem;margin-bottom:12px;"><code>"Python"[1:4]</code> нәтижесі қандай?</p>
+      <div class="choice-group" id="t73b">
+        <label class="choice"><input type="radio" name="q73b" value="1"><span>Pyt</span></label>
+        <label class="choice"><input type="radio" name="q73b" value="2"><span>yth</span></label>
+        <label class="choice"><input type="radio" name="q73b" value="3"><span>tho</span></label>
+        <label class="choice"><input type="radio" name="q73b" value="4"><span>ytho</span></label>
+      </div>
+      <button onclick="check73b()">Тексеру</button>
+      <button class="btn-retry" onclick="resetChoice('t73b','r73b')">🔄 Қайта орындау</button>
+      <div class="result" id="r73b"></div>
+    </div>
+
+    <h3>📝 20 тест</h3>
+    <div class="quiz" id="quiz7"></div>
+    <div class="ch-nav">
+      <button onclick="showPage('ch6')">← Алдыңғы</button>
+      <button onclick="showPage('ch8')">Келесі →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 8 ТАРАУ -->
+<div class="page" id="page-ch8">
+<div class="chapter-wrap">
+  <aside class="sidebar"><h2>📚 IV бөлім</h2><nav>
+    <button onclick="showPage('ch1')">1. Кіріспе</button>
+    <button onclick="showPage('ch2')">2. Алгоритм түрлері</button>
+    <button onclick="showPage('ch3')">3. Python синтаксисі</button>
+    <button onclick="showPage('ch4')">4. Шартты операторлар</button>
+    <button onclick="showPage('ch5')">5. Циклдер</button>
+    <button onclick="showPage('ch6')">6. Функциялар</button>
+    <button onclick="showPage('ch7')">7. Тізімдер мен жолдар</button>
+    <button onclick="showPage('ch8')" class="active">8. Қорытынды тест</button>
+  </nav></aside>
+  <div class="chapter-main">
+    <h2 class="ch-title">8-тарау. Қорытынды тест <span class="badge">40 сұрақ</span></h2>
+    <h3>Бөлім бойынша қорытынды</h3>
+    <p>Осы IV бөлімде біз Python тілінде алгоритмдерді программалаудың негіздерін үйрендік.</p>
+    <div class="note ok"><b>🎉 Құттықтаймыз!</b> Сіз Python тілінде алгоритмдерді программалаудың негізін меңгердіңіз!</div>
+    <p>Барлық тақырыпты қамтитын қорытынды тест (40 сұрақ).</p>
+    <div class="quiz" id="quizFinal"></div>
+    <div class="ch-nav">
+      <button onclick="showPage('ch7')">← Алдыңғы</button>
+      <button onclick="showPage('home')">🏠 Басты бетке</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer>
+  <p>© IV бөлім. Python тілінде алгоритмдерді программалау</p>
+  <p style="margin-top:6px;font-size:.85rem;">Информатика пәні · <a href="#" onclick="showPage('home');return false;">Басты бетке оралу</a></p>
+</footer>
+
+<button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+/* ============ БЕТ АУЫСТЫРУ ============ */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.navbar nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.page === id);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ============ ЖАУАПТАРДЫ ТЕКСЕРУ ============ */
+function show(id, ok, msg){
+  const el = document.getElementById(id);
+  el.className = 'result show ' + (ok?'ok':'err');
+  el.textContent = msg;
+}
+function check12b(){const v=document.getElementById('t12b').value;if(v==='2')show('r12b',true,'✅ Дұрыс! Python 1991 жылы Гвидо ван Россум жасады.');else show('r12b',false,'❌ Қате. Дұрыс жауап: 1991, Гвидо ван Россум.');}
+function check13b(){const s=document.querySelector('input[name="q13b"]:checked');document.querySelectorAll('#t13b .choice').forEach(c=>c.classList.remove('correct','wrong'));if(!s)return show('r13b',false,'⚠️ Жауапты таңдаңыз!');document.querySelectorAll('#t13b .choice').forEach(c=>{if(c.querySelector('input').value==='2')c.classList.add('correct');else if(c.querySelector('input').checked)c.classList.add('wrong');});if(s.value==='2')show('r13b',true,'✅ Дұрыс! Бұл — нәтижелілік қасиеті.');else show('r13b',false,'❌ Қате. Дұрыс жауап: Нәтижелілік.');}
+function check22(){const v=+document.getElementById('t22').value;if(v===2)show('r22',true,'✅ Дұрыс! 10 - 4*2 = 2.');else show('r22',false,'❌ Қате. 10 - 4*2 = 2');}
+function check23b(){const s=document.querySelector('input[name="q23b"]:checked');document.querySelectorAll('#t23b .choice').forEach(c=>c.classList.remove('correct','wrong'));if(!s)return show('r23b',false,'⚠️ Жауапты таңдаңыз!');document.querySelectorAll('#t23b .choice').forEach(c=>{if(c.querySelector('input').value==='2')c.classList.add('correct');else if(c.querySelector('input').checked)c.classList.add('wrong');});if(s.value==='2')show('r23b',true,'✅ Дұрыс! Шарт — ромб.');else show('r23b',false,'❌ Қате. Шарт ромбпен белгіленеді.');}
+function check33b(){const s=document.querySelector('input[name="q33b"]:checked');document.querySelectorAll('#t33b .choice').forEach(c=>c.classList.remove('correct','wrong'));if(!s)return show('r33b',false,'⚠️ Жауапты таңдаңыз!');document.querySelectorAll('#t33b .choice').forEach(c=>{if(c.querySelector('input').value==='3')c.classList.add('correct');else if(c.querySelector('input').checked)c.classList.add('wrong');});if(s.value==='3')show('r33b',true,'✅ Дұрыс! input() str қайтарады.');else show('r33b',false,'❌ Қате. input() — str.');}
+function check43b(){const s=document.querySelector('input[name="q43b"]:checked');document.querySelectorAll('#t43b .choice').forEach(c=>c.classList.remove('correct','wrong'));if(!s)return show('r43b',false,'⚠️ Жауапты таңдаңыз!');document.querySelectorAll('#t43b .choice').forEach(c=>{if(c.querySelector('input').value==='1')c.classList.add('correct');else if(c.querySelector('input').checked)c.classList.add('wrong');});if(s.value==='1')show('r43b',true,'✅ Дұрыс! 15 > 10 болғандықтан "A".');else show('r43b',false,'❌ Қате. 15 > 10, сондықтан "A".');}
+function check53b(){const s=document.querySelector('input[name="q53b"]:checked');document.querySelectorAll('#t53b .choice').forEach(c=>c.classList.remove('correct','wrong'));if(!s)return show('r53b',false,'⚠️ Жауапты таңдаңыз!');document.querySelectorAll('#t53b .choice').forEach(c=>{if(c.querySelector('input').value==='1')c.classList.add('correct');else if(c.querySelector('input').checked)c.classList.add('wrong');});if(s.value==='1')show('r53b',true,'✅ Дұрыс! 1 2 3.');else show('r53b',false,'❌ Қате. i=4 болғанда break, сондықтан 1 2 3.');}
+function check63b(){const s=document.querySelector('input[name="q63b"]:checked');document.querySelectorAll('#t63b .choice').forEach(c=>c.classList.remove('correct','wrong'));if(!s)return show('r63b',false,'⚠️ Жауапты таңдаңыз!');document.querySelectorAll('#t63b .choice').forEach(c=>{if(c.querySelector('input').value==='2')c.classList.add('correct');else if(c.querySelector('input').checked)c.classList.add('wrong');});if(s.value==='2')show('r63b',true,'✅ Дұрыс! 6*6 = 36.');else show('r63b',false,'❌ Қате. 6*6 = 36.');}
+function check73b(){const s=document.querySelector('input[name="q73b"]:checked');document.querySelectorAll('#t73b .choice').forEach(c=>c.classList.remove('correct','wrong'));if(!s)return show('r73b',false,'⚠️ Жауапты таңдаңыз!');document.querySelectorAll('#t73b .choice').forEach(c=>{if(c.querySelector('input').value==='2')c.classList.add('correct');else if(c.querySelector('input').checked)c.classList.add('wrong');});if(s.value==='2')show('r73b',true,'✅ Дұрыс! "Python"[1:4] = "yth".');else show('r73b',false,'❌ Қате. "Python"[1:4] = "yth".');}
+
+/* ============ PYTHON КОДЫН ОРЫНДАУ (Skulpt) ============ */
+function executePython(code, outEl, onDone){
+  let output = '';
+  outEl.className = 'output';
+  outEl.textContent = '';
+  let hasError = false;
+
+  try {
+    Sk.configure({
+      output: function(text){
+        output += text;
+        outEl.textContent = output;
+      },
+      read: function(x){
+        if(Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined){
+          throw "File not found: '" + x + "'";
+        }
+        return Sk.builtinFiles["files"][x];
+      },
+      __future__: Sk.python3,
+      execLimit: 5000
+    });
+
+    Sk.misceval.asyncToPromise(function(){
+      return Sk.importMainWithBody("<stdin>", false, code, true);
+    }).then(function(){
+      if(output === ''){
+        outEl.className = 'output empty';
+        outEl.textContent = '(бағдарлама шығыс шығармады)';
+      }
+      if(onDone) onDone(output, null);
+    }, function(err){
+      hasError = true;
+      outEl.className = 'output err';
+      outEl.textContent = '⚠ Қате: ' + err.toString();
+      if(onDone) onDone(output, err);
+    });
+  } catch(e){
+    outEl.className = 'output err';
+    outEl.textContent = '⚠ Қате: ' + e.toString();
+    if(onDone) onDone('', e);
+  }
+}
+
+function runCode(taskId){
+  const code = document.getElementById(taskId + '_code').value;
+  const outEl = document.getElementById(taskId + '_out');
+  const resEl = document.getElementById(taskId + '_res');
+  resEl.className = 'ct-result';
+  resEl.textContent = '';
+  executePython(code, outEl, null);
+}
+
+function checkCode(taskId, expected){
+  const code = document.getElementById(taskId + '_code').value;
+  const outEl = document.getElementById(taskId + '_out');
+  const resEl = document.getElementById(taskId + '_res');
+
+  executePython(code, outEl, function(output, err){
+    if(err){
+      resEl.className = 'ct-result show err';
+      resEl.textContent = '❌ Кодта қате бар. Шығысты тексеріңіз.';
+      return;
+    }
+    const got = output.replace(/\r/g, '').replace(/\s+$/,'');
+    const exp = expected.replace(/\r/g, '').replace(/\s+$/,'');
+    if(got === exp){
+      resEl.className = 'ct-result show ok';
+      resEl.textContent = '✅ Тамаша! Нәтиже дұрыс шықты!';
+    } else {
+      resEl.className = 'ct-result show err';
+      resEl.textContent = '❌ Нәтиже сәйкес емес. Күтілетін: "' + expected.replace(/\n/g, ' ⏎ ') + '", алынды: "' + got.replace(/\n/g, ' ⏎ ') + '"';
+    }
+  });
+}
+
+function resetCode(taskId){
+  document.getElementById(taskId + '_code').value = '';
+  const outEl = document.getElementById(taskId + '_out');
+  outEl.className = 'output empty';
+  outEl.textContent = '— әзірге бос —';
+  const resEl = document.getElementById(taskId + '_res');
+  resEl.className = 'ct-result';
+  resEl.textContent = '';
+}
+
+/* ============ ҚАЙТА ОРЫНДАУ ФУНКЦИЯЛАРЫ ============ */
+function resetMatch(wrapId, resId){
+  const wrap = document.getElementById(wrapId);
+  wrap.querySelectorAll('.match-item').forEach(item => {
+    item.classList.remove('selected','matched','wrong-flash');
+  });
+  matchStates[wrapId] = null;
+  const res = document.getElementById(resId);
+  res.className = 'result';
+  res.textContent = '';
+}
+function resetChoice(groupId, resId){
+  document.querySelectorAll('#' + groupId + ' input[type="radio"]').forEach(i => i.checked = false);
+  document.querySelectorAll('#' + groupId + ' .choice').forEach(c => c.classList.remove('correct','wrong'));
+  const res = document.getElementById(resId);
+  res.className = 'result';
+  res.textContent = '';
+}
+function resetInput(inputId, resId){
+  document.getElementById(inputId).value = '';
+  const res = document.getElementById(resId);
+  res.className = 'result';
+  res.textContent = '';
+}
+function resetSelect(selectId, resId){
+  document.getElementById(selectId).value = '';
+  const res = document.getElementById(resId);
+  res.className = 'result';
+  res.textContent = '';
+}
+function resetQuiz(id){
+  renderQuiz(id, quizzes[id]);
+}
+
+/* ============ СӘЙКЕСТЕНДІРУ ============ */
+const matchStates = {};
+
+function initMatch(){
+  document.querySelectorAll('.match-wrap').forEach(wrap => {
+    const id = wrap.id;
+    matchStates[id] = null;
+    wrap.querySelectorAll('.match-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if(item.classList.contains('matched')) return;
+        const sel = matchStates[id];
+        if(!sel){
+          matchStates[id] = item;
+          item.classList.add('selected');
+        } else if(sel === item){
+          item.classList.remove('selected');
+          matchStates[id] = null;
+        } else {
+          const sameCol = sel.parentElement === item.parentElement;
+          if(sameCol){
+            sel.classList.remove('selected');
+            matchStates[id] = item;
+            item.classList.add('selected');
+          } else {
+            if(sel.dataset.id === item.dataset.id){
+              sel.classList.remove('selected');
+              sel.classList.add('matched');
+              item.classList.add('matched');
+              matchStates[id] = null;
+            } else {
+              item.classList.add('wrong-flash');
+              sel.classList.add('wrong-flash');
+              setTimeout(() => {
+                item.classList.remove('wrong-flash');
+                sel.classList.remove('wrong-flash');
+              }, 500);
+              sel.classList.remove('selected');
+              matchStates[id] = null;
+            }
+          }
+        }
+      });
+    });
+  });
+}
+
+function checkMatch(wrapId, resId){
+  const wrap = document.getElementById(wrapId);
+  const all = wrap.querySelectorAll('.match-item');
+  const matched = wrap.querySelectorAll('.match-item.matched');
+  const res = document.getElementById(resId);
+  if(matched.length === all.length){
+    res.className = 'result show ok';
+    res.textContent = '✅ Керемет! Барлық ұғымдар дұрыс сәйкестендірілді!';
+  } else {
+    res.className = 'result show err';
+    res.textContent = `⚠️ ${matched.length}/${all.length} сәйкестендірілді. Қалғандарын тауып көріңіз.`;
+  }
+}
+
+/* ============ ТЕСТ ЖҮЙЕСІ ============ */
+const quizzes = {
+  quiz1:[
+    {q:"Python қай жылы жасалды?",o:["1989","1991","2000","1995"],a:1},
+    {q:"Python-ның авторы кім?",o:["Деннис Ритчи","Гвидо ван Россум","Бьёрн Страуструп","Джеймс Гослинг"],a:1},
+    {q:"Алгоритмнің «жеке қадамдарға бөлінуі» қасиеті?",o:["Нәтижелілік","Дискреттілік","Жалпылық","Түсініктілік"],a:1},
+    {q:"Экранға шығару функциясы?",o:["echo","printf","print","cout"],a:2},
+    {q:"Python қандай тіл?",o:["Компиляцияланатын","Интерпретацияланатын","Машиналық","Ассемблер"],a:1},
+    {q:"Python файл кеңейтілуі?",o:[".py",".python",".pt",".pyt"],a:0},
+    {q:"Алгоритм дегеніміз не?",o:["Бағдарлама","Әрекеттер тізбегі","Компьютер","Файл"],a:1},
+    {q:"Python тегін бе?",o:["Иә","Жоқ","Тек студенттерге","Тек 1 ай"],a:0},
+    {q:"Python қандай салаларда қолданылады?",o:["Тек веб","Тек AI","Көп салада","Тек ойын"],a:2},
+    {q:"Бірінші программа әдетте не істейді?",o:["Сан қосады","Сәлем шығарады","Сурет салады","Файл ашады"],a:1},
+    {q:"Python интерпретаторы дегеніміз не?",o:["Кодты жолма-жол орындайтын","Кодты аударатын","Кодты сақтайтын","Кодты өшіретін"],a:0},
+    {q:"Алгоритмнің «жалпылық» қасиеті нені білдіреді?",o:["Тек бір есепті шешеді","Ұқсас есептерді шешеді","Тек қағазда жазылады","Тек машина орындайды"],a:1},
+    {q:"Python-да комментарий қалай басталады?",o:["//","/*","#","--"],a:2},
+    {q:"Қай тіл интерпретацияланатын?",o:["C++","Python","Java","Pascal"],a:1},
+    {q:"Python-ның қай нұсқасы 2008 жылы шықты?",o:["1.0","2.0","3.0","4.0"],a:2},
+    {q:"Блок-схемада «процесс» қалай белгіленеді?",o:["Тіктөртбұрыш","Ромб","Сопақша","Шеңбер"],a:0},
+    {q:"Алгоритмнің неше негізгі қасиеті бар?",o:["2","3","4","5"],a:2},
+    {q:"Псевдокод дегеніміз не?",o:["Нақты код","Адам түсінетін жазба","Машиналық код","Жинақ"],a:1},
+    {q:"Python-да «Сәлем» шығару үшін не жазу керек?",o:["print()","echo","printf()","output()"],a:0},
+    {q:"Python-ды кім жасады?",o:["Деннис Ритчи","Гвидо ван Россум","Джеймс Гослинг","Линус Торвальдс"],a:1}
+  ],
+  quiz2:[
+    {q:"Сызықтық алгоритм дегеніміз?",o:["Шартты","Ретімен орындалатын","Қайталанатын","Кездейсоқ"],a:1},
+    {q:"Тармақталған алгоритмде не қолданылады?",o:["Цикл","Шарт","Функция","Тізім"],a:1},
+    {q:"Циклдік алгоритм не істейді?",o:["Қайталайды","Тоқтайды","Салыстырады","Шығарады"],a:0},
+    {q:"Процесс қалай белгіленеді?",o:["Ромб","Тіктөртбұрыш","Сопақша","Параллелограмм"],a:1},
+    {q:"Шығару қалай белгіленеді?",o:["Ромб","Тіктөртбұрыш","Параллелограмм","Шеңбер"],a:2},
+    {q:"Басы/соңы қалай белгіленеді?",o:["Ромб","Тіктөртбұрыш","Сопақша","Үшбұрыш"],a:2},
+    {q:"if операторы қай алгоритмге жатады?",o:["Сызықтық","Тармақталған","Циклдік","Рекурсивті"],a:1},
+    {q:"for операторы қай алгоритмге жатады?",o:["Сызықтық","Тармақталған","Циклдік","Шартты"],a:2},
+    {q:"a=5;b=3;c=a+b — қандай алгоритм?",o:["Сызықтық","Тармақталған","Циклдік","Аралас"],a:0},
+    {q:"Алгоритмнің неше негізгі түрі бар?",o:["2","3","4","5"],a:1},
+    {q:"Блок-схемада көрсеткі нені білдіреді?",o:["Шартты","Орындалу бағытын","Деректерді","Циклді"],a:1},
+    {q:"Алгоритмді орындаушы дегеніміз?",o:["Адам","Компьютер","Робот","Барлығы дұрыс"],a:3},
+    {q:"Сызықтық алгоритмнің блок-схемасы қандай?",o:["Бұтақталады","Тізбектеледі","Қайталанады","Шартты"],a:1},
+    {q:"Тармақталу қалай белгіленеді?",o:["Ромб","Тіктөртбұрыш","Сопақша","Шеңбер"],a:0},
+    {q:"Алгоритмнің негізгі құрылымдары?",o:["Тізбектелу, тармақталу, қайталау","Тек цикл","Тек шарт","Тек сызықты"],a:0},
+    {q:"Циклдік алгоритмде кері байланыс сызығы не үшін?",o:["Қайта бастау үшін","Тоқтату үшін","Шартты тексеру үшін","Шығу үшін"],a:0},
+    {q:"Псевдокод дегеніміз?",o:["Нақты код","Адам мен компьютер арасындағы жазба","Машиналық код","Жинақ"],a:1},
+    {q:"a=5 болса, a>3 қандай алгоритм бұтағы?",o:["Сызықтық","Шартты","Циклдік","Рекурсивті"],a:1},
+    {q:"1-ден 10-ға дейін санау — қандай алгоритм?",o:["Сызықтық","Тармақталған","Циклдік","Рекурсивті"],a:2},
+    {q:"Блок-схемада енгізу/шығару қалай белгіленеді?",o:["Ромб","Тіктөртбұрыш","Параллелограмм","Сопақша"],a:2}
+  ],
+  quiz3:[
+    {q:"5 саны қандай тип?",o:["int","float","str","bool"],a:0},
+    {q:"3.14 қандай тип?",o:["int","float","str","bool"],a:1},
+    {q:"\"Python\" қандай тип?",o:["int","float","str","bool"],a:2},
+    {q:"True қандай тип?",o:["int","float","str","bool"],a:3},
+    {q:"7 // 2 нешеге тең?",o:["3","3.5","4","1"],a:0},
+    {q:"7 % 2 нешеге тең?",o:["3","3.5","1","0"],a:2},
+    {q:"2 ** 4 нешеге тең?",o:["8","16","6","24"],a:1},
+    {q:"input() қандай тип қайтарады?",o:["int","float","str","bool"],a:2},
+    {q:"7 / 2 нешеге тең?",o:["3","3.5","4","1"],a:1},
+    {q:"Айнымалы типін білу функциясы?",o:["typeof()","type()","kind()","class()"],a:1},
+    {q:"17 // 5 нешеге тең?",o:["2","3","3.4","2.5"],a:1},
+    {q:"25 % 7 нешеге тең?",o:["3","4","2","5"],a:1},
+    {q:"int(\"42\") нәтижесі?",o:["42 (str)","42 (int)","Қате","None"],a:1},
+    {q:"str(15) нәтижесі?",o:["15 (int)","\"15\" (str)","Қате","None"],a:1},
+    {q:"Python-да айнымалы атауы неден басталуы мүмкін?",o:["Саннан","Әріптен","Арнайы таңбадан","Бос орыннан"],a:1},
+    {q:"bool(0) нәтижесі?",o:["True","False","0","None"],a:1},
+    {q:"Айнымалы атауы регистрге сезімтал ба?",o:["Иә","Жоқ","Кейде","Тек үлкен әріпке"],a:0},
+    {q:"10 // 3 нәтижесі?",o:["3","3.33","4","1"],a:0},
+    {q:"float(\"2.5\") нәтижесі?",o:["2 (int)","2.5 (float)","\"2.5\" (str)","Қате"],a:1},
+    {q:"Python-да көп жолды комментарий қалай жазылады?",o:["//","#","\"\"\" ... \"\"\"","/* */"],a:2}
+  ],
+  quiz4:[
+    {q:"if операторы нені тексереді?",o:["Цикл","Шарт","Тізім","Функция"],a:1},
+    {q:"== операторы нені білдіреді?",o:["Тағайындау","Теңдік","Үлкен","Кіші"],a:1},
+    {q:"!= операторы нені білдіреді?",o:["Тең","Тең емес","Үлкен","Кіші"],a:1},
+    {q:"and операторы нені білдіреді?",o:["Немесе","Және","Емес","Тең"],a:1},
+    {q:"or операторы нені білдіреді?",o:["Және","Немесе","Емес","Тең"],a:1},
+    {q:"not операторы нені білдіреді?",o:["Және","Немесе","Емес","Тең"],a:2},
+    {q:"Python-да шегініс неше бос орын?",o:["2","4","6","8"],a:1},
+    {q:"elif нені білдіреді?",o:["Соңы","Қосымша шарт","Цикл","Шығу"],a:1},
+    {q:"else қай жағдайда орындалады?",o:["Барлық шарт қате болса","Бірінші шарт дұрыс","Әрқашан","Ешқашан"],a:0},
+    {q:"if x > 10 — x=5 болса?",o:["A шығады","Ештеңе шықпайды","Қате","B шығады"],a:1},
+    {q:"if x == 5 және x = 5 болса — нәтиже?",o:["Шарт дұрыс","Шарт қате","Қате","Бос"],a:0},
+    {q:"True and False нәтижесі?",o:["True","False","None","Қате"],a:1},
+    {q:"True or False нәтижесі?",o:["True","False","None","Қате"],a:0},
+    {q:"not True нәтижесі?",o:["True","False","None","1"],a:1},
+    {q:"x=15 болса, x >= 10 and x <= 20 нәтижесі?",o:["True","False","Қате","None"],a:0},
+    {q:">= операторы нені білдіреді?",o:["Үлкен","Кіші","Үлкен немесе тең","Тең"],a:2},
+    {q:"Шегініс қате болса, қандай қате шығады?",o:["SyntaxError","IndentationError","NameError","TypeError"],a:1},
+    {q:"if-elif-else құрылымында неше elif болуы мүмкін?",o:["1","2","3","Шексіз (қажетінше)"],a:3},
+    {q:"x=0 болса, if x: нәтижесі?",o:["True","False","Қате","None"],a:1},
+    {q:"Тернарлық оператордың дұрыс жазылуы?",o:["if x>0: \"Оң\" else \"Теріс\"","\"Оң\" if x>0 else \"Теріс\"","if (x>0) \"Оң\" else \"Теріс\"","x>0 ? \"Оң\" : \"Теріс\""],a:1}
+  ],
+  quiz5:[
+    {q:"for циклі қашан қолданылады?",o:["Қайталау саны белгілі","Шартсыз","Рекурсияда","Файлда"],a:0},
+    {q:"while циклі қашан қолданылады?",o:["Шартқа байланысты","Қайталау саны белгілі","Әрқашан","Ешқашан"],a:0},
+    {q:"range(5) қандай сандар?",o:["1-5","0-4","0-5","1-4"],a:1},
+    {q:"range(1,5) қандай сандар?",o:["1-5","0-4","1-4","0-5"],a:2},
+    {q:"break нені істейді?",o:["Жалғастырады","Циклден шығады","Қайталайды","Тоқтатады"],a:1},
+    {q:"continue нені істейді?",o:["Шығады","Өткізіп жібереді","Тоқтайды","Қайталайды"],a:1},
+    {q:"range(0,10,2) қандай сандар?",o:["0,2,4,6,8","0-10","2,4,6,8,10","1,3,5,7,9"],a:0},
+    {q:"1-ден 5-ке дейінгі қосынды?",o:["10","15","20","25"],a:1},
+    {q:"while шарты әрқашан True болса?",o:["Тоқтайды","Шексіз цикл","Қате","Өшеді"],a:1},
+    {q:"Цикл денесі қалай белгіленеді?",o:["Жақшамен","Шегініспен","Нүктемен","Үтірмен"],a:1},
+    {q:"range(5,0,-1) қандай сандар?",o:["5,4,3,2,1","0-5","1-5","5,0"],a:0},
+    {q:"Кірістірілген цикл дегеніміз?",o:["Цикл ішінде цикл","Бір цикл","Шарт","Функция"],a:0},
+    {q:"for i in range(3) неше рет айналады?",o:["1","2","3","4"],a:2},
+    {q:"while i < 5: i+=1 — неше рет айналады (i=0)?",o:["4","5","6","Шексіз"],a:1},
+    {q:"1-ден 100-ге дейінгі қосынды?",o:["5000","5050","4950","5100"],a:1},
+    {q:"continue кейін цикл не істейді?",o:["Тоқтайды","Келесі итерацияға өтеді","Шығады","Қайта бастайды"],a:1},
+    {q:"Цикл ішінде i += 1 не үшін керек?",o:["Шартты өзгерту үшін","Тоқтату үшін","Шығу үшін","Ештеңе"],a:0},
+    {q:"range() функциясы қандай сандар қайтарады?",o:["Тізім","Диапазон","Жол","Шарт"],a:1},
+    {q:"2-ден 10-ға дейінгі жұп сандар қосындысы?",o:["20","24","30","32"],a:2},
+    {q:"break пен continue айырмашылығы?",o:["Екеуі бірдей","break — шығады, continue — өткізеді","continue — шығады, break — өткізеді","Екеуі тоқтатады"],a:1}
+  ],
+  quiz6:[
+    {q:"Функция қандай кілт сөзбен құрылады?",o:["function","def","fun","define"],a:1},
+    {q:"Нәтиже қайтару үшін?",o:["print","return","output","give"],a:1},
+    {q:"Функцияны шақыру қалай?",o:["def f()","f()","call f","function f"],a:1},
+    {q:"Рекурсия дегеніміз?",o:["Қайталау","Өзін-өзі шақыру","Тоқтау","Шығу"],a:1},
+    {q:"faktorial(5) нешеге тең?",o:["24","60","120","720"],a:2},
+    {q:"faktorial(0) нешеге тең?",o:["0","1","Қате","Шексіз"],a:1},
+    {q:"Әдепкі параметр дегеніміз?",o:["Міндетті","Алдын ала берілген мән","Соңғы","Бірінші"],a:1},
+    {q:"Функция бірнеше мән қайтара ала ма?",o:["Иә","Жоқ","Тек 1","Тек 0"],a:0},
+    {q:"kosu(2,3) — def kosu(a,b): return a+b?",o:["5","23","6","Қате"],a:0},
+    {q:"Docstring дегеніміз?",o:["Айнымалы","Түсіндірме жол","Цикл","Шарт"],a:1},
+    {q:"Параметр мен аргумент айырмашылығы?",o:["Екеуі бірдей","Параметр — анықтамада, аргумент — шақыруда","Аргумент — анықтамада","Екеуі де шақыруда"],a:1},
+    {q:"Локалды айнымалы дегеніміз?",o:["Барлық жерде көрінеді","Тек функция ішінде","Тек файлда","Тек циклде"],a:1},
+    {q:"Глобалды айнымалы дегеніміз?",o:["Тек функция ішінде","Барлық жерде көрінеді","Тек сыртта","Тек файлда"],a:1},
+    {q:"faktorial(3) нешеге тең?",o:["3","6","9","12"],a:1},
+    {q:"def f(): return 5 — f() нешеге тең?",o:["0","5","None","Қате"],a:1},
+    {q:"Функция нәтижесін қайтармаса не болады?",o:["0","None","Қате","Бос жол"],a:1},
+    {q:"Функция атауы қандай болуы керек?",o:["Кез келген","Мағыналы","Қысқа","Ұзын"],a:1},
+    {q:"Функцияның артықшылығы?",o:["Кодты қайта пайдалану","Құрылымдылық","Оқуға жеңілдік","Барлығы дұрыс"],a:3},
+    {q:"kvadrat(5) = 5*5 болса, kvadrat(3)?",o:["6","9","12","15"],a:1},
+    {q:"Рекурсияның базалық шарты не үшін керек?",o:["Жылдамдық үшін","Тоқтау үшін","Көбірек шақыру үшін","Шығу үшін"],a:1}
+  ],
+  quiz7:[
+    {q:"a=[10,20,30] — a[1] нешеге тең?",o:["10","20","30","Қате"],a:1},
+    {q:"Тізім ұзындығын қалай білуге?",o:["size()","length()","len()","count()"],a:2},
+    {q:"Тізім соңына қосу әдісі?",o:["add()","append()","push()","insert()"],a:1},
+    {q:"Тізімді сұрыптау әдісі?",o:["order()","sort()","arrange()","list()"],a:1},
+    {q:"a=[1,2,3]; a[-1] нешеге тең?",o:["1","2","3","Қате"],a:2},
+    {q:"\"Python\"[0] нешеге тең?",o:["P","y","n","Қате"],a:0},
+    {q:"\"Python\"[1:4] нешеге тең?",o:["Pyt","yth","tho","ytho"],a:1},
+    {q:"Жол ұзындығын қалай білуге?",o:["size()","len()","length()","count()"],a:1},
+    {q:"\"Python\".upper() нәтижесі?",o:["python","PYTHON","Python","PythoN"],a:1},
+    {q:"Тізімнен элемент өшіру әдісі?",o:["delete()","remove()","pop()","clear()"],a:1},
+    {q:"a=[1,2,3,4,5]; a[1:3] нешеге тең?",o:["[1,2]","[2,3]","[2,3,4]","[1,2,3]"],a:1},
+    {q:"\"hello\".lower() нәтижесі?",o:["HELLO","hello","Hello","hELLO"],a:1},
+    {q:"a=[] — бұл не?",o:["Бос тізім","Қате","Бос жол","None"],a:0},
+    {q:"Тізімге элемент қосу әдісі?",o:["append(x)","push(x)","add(x)","insert(x)"],a:0},
+    {q:"a=[1,2,3]; a.append(4); len(a)?",o:["3","4","5","Қате"],a:1},
+    {q:"Жолды бөлу әдісі?",o:["split()","divide()","cut()","part()"],a:0},
+    {q:"\"abc\".replace(\"a\",\"x\") нәтижесі?",o:["abc","xbc","axc","abx"],a:1},
+    {q:"Тізімді кему ретімен сұрыптау?",o:["sort()","sort(reverse=True)","reverse()","order()"],a:1},
+    {q:"\"hello,world\".split(\",\") нәтижесі?",o:["[\"hello\",\"world\"]","[\"hello,world\"]","\"helloworld\"","Қате"],a:0},
+    {q:"len(\"hello\") нешеге тең?",o:["4","5","6","7"],a:1}
+  ],
+  quizFinal:[
+    {q:"Python қай жылы жасалды?",o:["1989","1991","2000","1995"],a:1},
+    {q:"Алгоритмнің неше негізгі түрі бар?",o:["2","3","4","5"],a:1},
+    {q:"7 // 2 нешеге тең?",o:["3","3.5","4","1"],a:0},
+    {q:"7 % 2 нешеге тең?",o:["3","3.5","1","0"],a:2},
+    {q:"if операторы қай алгоритмге жатады?",o:["Сызықтық","Тармақталған","Циклдік","Рекурсивті"],a:1},
+    {q:"for циклі қашан қолданылады?",o:["Қайталау саны белгілі","Шартсыз","Рекурсияда","Файлда"],a:0},
+    {q:"Функция қандай кілт сөзбен құрылады?",o:["function","def","fun","define"],a:1},
+    {q:"faktorial(4) нешеге тең?",o:["12","24","36","48"],a:1},
+    {q:"a=[10,20,30] — a[2] нешеге тең?",o:["10","20","30","Қате"],a:2},
+    {q:"Тізім соңына қосу әдісі?",o:["add()","append()","push()","insert()"],a:1},
+    {q:"input() қандай тип қайтарады?",o:["int","float","str","bool"],a:2},
+    {q:"break нені істейді?",o:["Жалғастырады","Циклден шығады","Қайталайды","Тоқтатады"],a:1},
+    {q:"continue нені істейді?",o:["Шығады","Өткізіп жібереді","Тоқтайды","Қайталайды"],a:1},
+    {q:"Блок-схемада шарт қалай белгіленеді?",o:["Ромб","Тіктөртбұрыш","Сопақша","Параллелограмм"],a:0},
+    {q:"== операторы нені білдіреді?",o:["Тағайындау","Теңдік","Үлкен","Кіші"],a:1},
+    {q:"and операторы нені білдіреді?",o:["Немесе","Және","Емес","Тең"],a:1},
+    {q:"2 ** 3 нешеге тең?",o:["6","8","9","5"],a:1},
+    {q:"len([1,2,3,4]) нешеге тең?",o:["3","4","5","6"],a:1},
+    {q:"\"Python\"[0] нешеге тең?",o:["P","y","n","Қате"],a:0},
+    {q:"\"Python\".upper() нәтижесі?",o:["python","PYTHON","Python","PythoN"],a:1},
+    {q:"Python-да шегініс неше бос орын?",o:["2","4","6","8"],a:1},
+    {q:"17 % 5 нешеге тең?",o:["2","3","4","1"],a:0},
+    {q:"17 // 5 нешеге тең?",o:["2","3","4","1"],a:1},
+    {q:"25 % 7 нешеге тең?",o:["2","3","4","5"],a:1},
+    {q:"bool(0) нәтижесі?",o:["True","False","0","None"],a:1},
+    {q:"type(3.14) нәтижесі?",o:["int","float","str","bool"],a:1},
+    {q:"or операторы нені білдіреді?",o:["Және","Немесе","Емес","Тең"],a:1},
+    {q:"not True нәтижесі?",o:["True","False","None","1"],a:1},
+    {q:"range(5) қандай сандар?",o:["1-5","0-4","0-5","1-4"],a:1},
+    {q:"range(1,5) қандай сандар?",o:["1-5","0-4","1-4","0-5"],a:2},
+    {q:"a=[1,2,3]; a[-1] нешеге тең?",o:["1","2","3","Қате"],a:2},
+    {q:"\"Python\"[1:4] нешеге тең?",o:["Pyt","yth","tho","ytho"],a:1},
+    {q:"faktorial(3) нешеге тең?",o:["3","6","9","12"],a:1},
+    {q:"range(0,10,2) қандай сандар?",o:["0,2,4,6,8","0-10","2,4,6,8,10","1,3,5,7,9"],a:0},
+    {q:"Тізім ұзындығын қалай білуге?",o:["size()","length()","len()","count()"],a:2},
+    {q:"Тізімді сұрыптау әдісі?",o:["order()","sort()","arrange()","list()"],a:1},
+    {q:"Блок-схемада басы/соңы қалай белгіленеді?",o:["Ромб","Тіктөртбұрыш","Сопақша","Параллелограмм"],a:2},
+    {q:"Блок-схемада енгізу/шығару қалай белгіленеді?",o:["Ромб","Тіктөртбұрыш","Сопақша","Параллелограмм"],a:3},
+    {q:"Python-да айнымалы атауы неден басталмауы керек?",o:["Әріптен","Саннан","_ таңбасынан","Барлық жауап дұрыс емес"],a:1}
+  ]
+};
+
+function renderQuiz(id, questions){
+  const box = document.getElementById(id);
+  if(!box) return;
+  let html = '<h4>Сұрақтарға жауап беріңіз:</h4>';
+  questions.forEach((item, i) => {
+    html += `<div class="question" data-q="${i}"><div class="q-text">${i+1}. ${item.q}</div>`;
+    item.o.forEach((opt, j) => {
+      html += `<label class="opt"><input type="radio" name="${id}_q${i}" value="${j}">${String.fromCharCode(65+j)}) ${opt}</label>`;
+    });
+    html += `</div>`;
+  });
+  html += `<button class="quiz-btn" onclick="checkQuiz('${id}')">Нәтижені көру</button>`;
+  html += `<button class="quiz-btn retry" onclick="resetQuiz('${id}')">🔄 Қайта орындау</button>`;
+  html += `<div class="quiz-result" id="${id}_res"></div>`;
+  box.innerHTML = html;
+}
+
+function checkQuiz(id){
+  const questions = quizzes[id];
+  let correct = 0;
+  questions.forEach((item, i) => {
+    const selected = document.querySelector(`input[name="${id}_q${i}"]:checked`);
+    const qDiv = document.querySelector(`#${id} .question[data-q="${i}"]`);
+    qDiv.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','wrong'));
+    qDiv.querySelectorAll('.opt').forEach((o, j) => {
+      if(j === item.a) o.classList.add('correct');
+    });
+    if(selected && +selected.value === item.a){ correct++; }
+    else if(selected){ selected.closest('.opt').classList.add('wrong'); }
+  });
+  const res = document.getElementById(id + '_res');
+  const percent = Math.round(correct / questions.length * 100);
+  res.className = 'quiz-result show ' + (percent >= 60 ? 'pass' : 'fail');
+  res.innerHTML = `✅ Дұрыс жауап: <b>${correct}/${questions.length}</b> (${percent}%)<br>` +
+                  (percent >= 60 ? '🎉 Құттықтаймыз! Тесттен өттіңіз.' : '📖 Тағы да қайталап көріңіз.');
+}
+
+Object.keys(quizzes).forEach(id => renderQuiz(id, quizzes[id]));
+
+window.addEventListener('scroll', () => {
+  document.getElementById('topBtn').style.display = window.scrollY > 400 ? 'block' : 'none';
+});
+
+document.addEventListener('DOMContentLoaded', initMatch);
+</script>
+</body>
+</html>
